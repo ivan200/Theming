@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- https://material.io/guidelines/layout/metrics-keylines.html#metrics-keylines-keylines-spacing -->
+    <dimen name="margin_half">8dp</dimen>
+    <dimen name="margin_default">16dp</dimen>
+    <dimen name="margin_double">32dp</dimen>
+</resources>
