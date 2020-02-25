@@ -4,6 +4,7 @@
     package="com.ivan200.theming">
 
     <application
+        android:name=".ThemingApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

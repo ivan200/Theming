@@ -1,6 +1,6 @@
 package com.ivan200.theming
 
-import android.graphics.Color
+import com.ivan200.theming.preference.Prefs
 import com.ivan200.theminglib.ThemingBase
 
 object Theming : ThemingBase(){
@@ -15,16 +15,15 @@ object Theming : ThemingBase(){
 //    override var colorBackground: Int = colors["background"] ?: Prefs.colorBackground
 
 
-    override val colorPrimary: Int get() = Color.parseColor("#54a9ff")
+    override val colorPrimary: Int get() = Prefs.colorPrimary ?: super.colorPrimary
 
 //light
 //    override val colorBackground: Int get() = Color.parseColor("#f5f5f5")
 
-//dark
-    override val colorBackground: Int get() = Color.parseColor("#303030")
+    //dark
+    override val colorBackground: Int get() = Prefs.colorBackground ?: super.colorBackground
 
 
 //    override val colorProgressBar: Int
 //        get() = super.colorProgressBar
-
 }

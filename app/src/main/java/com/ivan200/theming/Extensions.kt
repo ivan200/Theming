@@ -1,15 +1,10 @@
 package com.ivan200.theming
 
-import android.content.Context
 import android.view.View
-import com.ivan200.theming.preference.Prefs
 
 //
 // Created by Ivan200 on 17.02.2020.
 //
-
-
-val Context.prefs get() = Prefs(this)
 
 
 fun Boolean?.toInt() = if(this == null) -1 else if(this) 1 else 0

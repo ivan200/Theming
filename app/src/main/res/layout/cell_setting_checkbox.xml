@@ -56,7 +56,6 @@
         tools:visibility="visible" />
 
     <FrameLayout
-        android:id="@+id/fl_checkbox"
         android:layout_width="@dimen/size_icon_clickable_area"
         android:layout_height="@dimen/size_icon_clickable_area"
         android:layout_gravity="center_vertical"
@@ -71,14 +70,5 @@
             android:focusable="false"/>
 
     </FrameLayout>
-
-    <View
-        android:id="@+id/v_color"
-        android:layout_width="@dimen/size_icon_clickable_area"
-        android:layout_height="@dimen/size_icon_clickable_area"
-        android:layout_gravity="center_vertical"
-        android:background="@color/colorPrimary"
-        android:textColor="#ffffff"
-        android:visibility="visible" />
 
 </LinearLayout>

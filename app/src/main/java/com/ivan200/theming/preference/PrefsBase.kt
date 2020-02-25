@@ -10,59 +10,48 @@ import kotlin.reflect.KProperty
 //
 
 /**
- * Non-nullable default preferences
+ * Nullable default preferences
  */
-abstract class PrefsBase(val context: Context) {
-    open fun getSharedPreferences(context: Context): SharedPreferences {
+abstract class PrefsBase {
+    private lateinit var sp: SharedPreferences
+
+    fun init(context: Context) {
+        sp = getSharedPreferences(context)
+    }
+
+    protected open fun getSharedPreferences(context: Context): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(context)
     }
 
-    protected inner class AnyPref<T : Any>(private val default: T) {
-        val sp get() = getSharedPreferences(context)
-
+    abstract inner class AnyPref<T>(val name: String? = null) {
         @Suppress("UNCHECKED_CAST")
         operator fun getValue(thisRef: Any, property: KProperty<*>) =
-            sp.get(property.name, default) as T
+            getValue(sp, name ?: property.name)
 
         operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) =
-            sp.put(property.name, value)
+            setValue(sp, name ?: property.name, value)
 
-        private fun SharedPreferences.smartEdit(func: SharedPreferences.Editor.() -> Unit) {
-            val editor = edit()
-            editor.func()
-            editor.apply()
+        abstract fun getValue(prefs: SharedPreferences, key: String): T
+        abstract fun setValue(prefs: SharedPreferences, key: String, value: T)
+    }
+
+    inner class BooleanPref(private val defValue: Boolean? = null, name: String? = null) : AnyPref<Boolean?>(name) {
+        override fun getValue(prefs: SharedPreferences, key: String): Boolean? {
+            return if (prefs.contains(key)) prefs.getBoolean(key, defValue ?: false) else defValue
         }
 
-        private fun SharedPreferences.put(key: String, value: Any) = smartEdit {
-            when (value) {
-                is String -> putString(key, value)
-                is Long -> putLong(key, value)
-                is Int -> putInt(key, value)
-                is Boolean -> putBoolean(key, value)
-                is Float -> putFloat(key, value)
-                is MutableSet<*> -> putStringSet(
-                    key, (value as? MutableSet<*>)
-                        ?.filterIsInstance<String>()
-                        ?.toMutableSet() ?: setOf()
-                )
-                else -> throw NotImplementedError()
-            }
+        override fun setValue(prefs: SharedPreferences, key: String, value: Boolean?) {
+            prefs.edit().apply { if (value == null) remove(key) else putBoolean(key, value) }.apply()
+        }
+    }
+
+    inner class IntPref(private val defValue: Int? = null, name: String? = null) : AnyPref<Int?>(name) {
+        override fun getValue(prefs: SharedPreferences, key: String): Int? {
+            return if (prefs.contains(key)) prefs.getInt(key, defValue ?: 0) else defValue
         }
 
-        private fun SharedPreferences.get(key: String, defaultValue: Any): Any {
-            return when (defaultValue) {
-                is String -> getString(key, defaultValue)
-                is Long -> getLong(key, defaultValue)
-                is Int -> getInt(key, defaultValue)
-                is Boolean -> getBoolean(key, defaultValue)
-                is Float -> getFloat(key, defaultValue)
-                is MutableSet<*> -> getStringSet(
-                    key, defaultValue
-                        .filterIsInstance<String>()
-                        .toMutableSet()
-                )
-                else -> throw NotImplementedError()
-            } ?: defaultValue
+        override fun setValue(prefs: SharedPreferences, key: String, value: Int?) {
+            prefs.edit().apply { if (value == null) remove(key) else putInt(key, value) }.apply()
         }
     }
 }
