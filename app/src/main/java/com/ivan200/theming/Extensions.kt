@@ -1,37 +1,43 @@
 package com.ivan200.theming
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
+import android.view.View
+import com.ivan200.theming.preference.Prefs
 
 //
 // Created by Ivan200 on 17.02.2020.
 //
 
-fun <T: Number> T?.orElse(number: T) =
-    if (this != null && this != 0) this else number
 
-//fun Int?.orElse(int: Int) =
-//    if (this != null && this != 0) this else int
-//
-//fun Int?.or(int: Int?) =
-//    if (this != null && this != 0) this else int
+val Context.prefs get() = Prefs(this)
 
 
-fun Long?.orElse(long: Long) =
-    if (this != null && this != 0L) this else long
+fun Boolean?.toInt() = if(this == null) -1 else if(this) 1 else 0
 
-fun Long?.or(long: Long?) =
-    if (this != null && this != 0L) this else long
-
-
-inline fun <reified T : Activity> Context.launchActivity(
-    options: Bundle? = null,
-    noinline init: Intent.() -> Unit = {}
-) {
-    val intent = Intent(this, T::class.java)
-    intent.init()
-    startActivity(intent, options)
-
+fun <T:View> T.show() : T {
+    if (visibility != View.VISIBLE) visibility = View.VISIBLE
+    return this
 }
+
+fun <T : View> T.hide(): T {
+    if (visibility != View.GONE) visibility = View.GONE
+    return this
+}
+
+fun <T : View> T.invisible() : T {
+    if (visibility != View.INVISIBLE) visibility = View.INVISIBLE
+    return this
+}
+
+fun <T : View> T.showIf(condition: () -> Boolean): T {
+    return if (condition()) show() else hide()
+}
+
+fun <T : View> T.hideIf(condition: () -> Boolean): T {
+    return if (condition()) hide() else show()
+}
+
+fun <T : View> T.invisibleIf(condition: () -> Boolean): T {
+    return if (condition()) invisible() else show()
+}
+

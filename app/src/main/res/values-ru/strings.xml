@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Theming</string>
+
+    <string name="hint_login">ЛОГИН</string>
+    <string name="hint_password">ПАРОЛЬ</string>
+    <string name="hint_ime_sign_in_short">Войти</string>
+    <string name="icon_settings">Настройки</string>
+</resources>

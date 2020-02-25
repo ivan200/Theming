@@ -4,4 +4,10 @@
     <dimen name="margin_half">8dp</dimen>
     <dimen name="margin_default">16dp</dimen>
     <dimen name="margin_double">32dp</dimen>
+
+    <dimen name="height_list_item">64dp</dimen>
+    <dimen name="height_subheader">48dp</dimen>
+    <dimen name="size_icon_clickable_area">48dp</dimen>
+    <dimen name="size_icon_bounding">56dp</dimen>
+    <dimen name="margin_icon_bounding">3dp</dimen>
 </resources>

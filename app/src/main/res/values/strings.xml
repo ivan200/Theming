@@ -4,6 +4,7 @@
     <string name="hint_login">LOGIN</string>
     <string name="hint_password">PASSWORD</string>
     <string name="hint_ime_sign_in_short">Sign in</string>
+    <string name="icon_settings">Settings</string>
 
 
 </resources>
