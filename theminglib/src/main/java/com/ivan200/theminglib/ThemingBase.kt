@@ -16,6 +16,8 @@ import androidx.appcompat.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.ViewCompat
+import androidx.core.widget.CompoundButtonCompat
 import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
@@ -94,7 +96,9 @@ abstract class ThemingBase {
     /** Цвет хинта вводимого текста **/
     open val colorInputHint: Int get() = colorTextHint
     /** Цвет вводимого текста **/
-    open val colorInputText: ColorStateList get() = colorTextStateList
+    open val colorInputText: Int get() = colorText
+    /** Цвет вводимого текста **/
+    open val colorInputTextStateList: ColorStateList get() = getTextStateList(colorInputText)
     /** Цвет полоски под полем ввода **/
     open val colorInputBottomLine: Int get() = colorPrimary
     /** Цвет моргающего курсора **/
@@ -107,8 +111,8 @@ abstract class ThemingBase {
     //ProgressBar
     /** Цвет прогрессбара **/
     open val colorProgressBar: Int get() = colorPrimary
-    /** Цвет второго прогрессбара **/
-    open val colorProgressBarSecondary: Int get() = ColorUtils.setAlphaComponent(colorProgressBar, (255 * getDisabledAlpha(isLightTheme)).toInt())
+    /** Цвет второго прогрессбара (автоматически затеняется) **/
+    open val colorProgressBarSecondary: Int get() = colorProgressBar
     /** Цвет фона прогрессбара **/
     open val colorProgressBarBackground: Int get() = getSecondaryTextColor(colorText)
     //SeekBar
@@ -322,23 +326,6 @@ abstract class ThemingBase {
         win.decorView.systemUiVisibility = if (state) flags or bits else flags and bits.inv()
     }
 
-
-//    //Перекрашивание нижнего навигейшнбара
-//    fun themeNavigationBar(window: Window) {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val flagLightNavBar = if (isLightTheme) View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR else View.SYSTEM_UI_FLAG_VISIBLE
-//            window.decorView.systemUiVisibility = window.decorView.systemUiVisibility or
-//                    WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS or
-//                    flagLightNavBar
-//            window.navigationBarColor = colorNavBar
-//        } else if (Build.VERSION.SDK_INT >= 21) {
-//            window.navigationBarColor = colorNavBarDark
-//        }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-//            window.navigationBarDividerColor = colorNavBarDivider
-//        }
-//    }
-
     //применяет цвета для списка вьюшек
     fun themeViews(vararg view: View?) {
         view.forEach {
@@ -406,29 +393,6 @@ abstract class ThemingBase {
         setBackgroundColorSavePadding(layout, color ?: colorBackground)
     }
 
-    fun themeViewAction(view: View, @ColorInt color: Int? = null) {
-        setBackgroundColorSavePadding(view, color ?: colorBackground)
-    }
-
-    fun themeToolbar(toolbar: Toolbar) {
-        themeViewAction(toolbar, colorActionBar)
-        for (i in 0 until toolbar.childCount) when (val v = toolbar.getChildAt(i)) {
-            is TextView -> themeTextView(v, colorActionBarText)
-            is ImageView -> themeImageView(v, colorActionBarIcons)
-        }
-        toolbar.solidColor
-    }
-
-    fun themeSeekBar(seek: AppCompatSeekBar) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            seek.tickMarkTintList = ColorStateList.valueOf(colorProgressBar)
-            seek.thumbTintList = ColorStateList.valueOf(colorProgressBar)
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            seek.thumb = ThemeUtils.tintDrawable(seek.thumb, colorProgressBar)
-        }
-        themeProgressBar(seek)
-    }
-
     fun themeSeekBar(seek: SeekBar) {
         try {
             when {
@@ -436,7 +400,7 @@ abstract class ThemingBase {
                     seek.tickMarkTintList = ColorStateList.valueOf(colorSeekBarTickMark)
                 }
                 seek is AppCompatSeekBar -> {
-                    modifyPrivateFieldThroughEditor<Drawable>(
+                    ThemeUtils.modifyPrivateFieldThroughEditor<Drawable>(
                         seek, AppCompatSeekBar::class.java,
                         "mAppCompatSeekBarHelper", "mTickMark"
                     ) {
@@ -444,7 +408,7 @@ abstract class ThemingBase {
                     }
                 }
                 else -> {
-                    modifyPrivateField<Drawable>(seek, AbsSeekBar::class.java, "mTickMark") {
+                    ThemeUtils.modifyPrivateField<Drawable>(seek, AbsSeekBar::class.java, "mTickMark") {
                         it?.apply {ThemeUtils.tintDrawable(this, colorSeekBarTickMark)}
                     }
                 }
@@ -460,7 +424,7 @@ abstract class ThemingBase {
                 seek.thumb = ThemeUtils.tintDrawable(seek.thumb, colorSeekBarThumb)
             }
             else -> {
-                modifyPrivateField<Drawable>(seek, AbsSeekBar::class.java, "mThumb") {
+                ThemeUtils.modifyPrivateField<Drawable>(seek, AbsSeekBar::class.java, "mThumb") {
                     it?.apply {ThemeUtils.tintDrawable(this, colorSeekBarThumb)}
                 }
             }
@@ -468,63 +432,10 @@ abstract class ThemingBase {
         themeProgressBar(seek)
     }
 
-    fun <T> modifyPrivateFieldThroughEditor(
-        obj: Any,
-        objClass: Class<*>,
-        editorName: String,
-        fieldName: String,
-        modify: (T?) -> T?
-    ) {
-        try {
-            objClass
-                .getDeclaredField(editorName)
-                .apply { isAccessible = true }
-                .get(obj)
-                ?.apply { modifyPrivateField(this, this::class.java, fieldName, modify) }
-        } catch (t: Throwable) {
-            t.printStackTrace()
-        }
-    }
-
-    fun <T> modifyPrivateField(obj: Any, clazz: Class<*>, fieldName: String, modify: (T?) -> T?) {
-        try {
-            clazz
-                .getDeclaredField(fieldName)
-                .apply { isAccessible = true }
-                .run {
-                    val field = try { get(obj) as T? } catch (ex: NullPointerException) { null }
-                    set(obj, modify(field))
-                }
-        } catch (t: Throwable) {
-            t.printStackTrace()
-        }
-    }
-
-    fun <T> getPrivateFieldOrNull(obj: Any, clazz: Class<*>, fieldName: String): T? {
-        var result: T? = null
-        try {
-            clazz.getDeclaredField(fieldName)
-                .apply { isAccessible = true }
-                .run {
-                    result = try {
-                        get(obj) as T?
-                    } catch (ex: NullPointerException) {
-                        null
-                    }
-                }
-        } catch (t: Throwable) {
-            t.printStackTrace()
-        }
-        return result
-    }
-
     @Suppress("DEPRECATION")
     fun themeProgressBar(progress: ProgressBar) {
         val color = colorProgressBar
-        val colorSecondary = Color.WHITE
-//            colorProgressBarSecondary
         val colorBackground = colorProgressBarBackground
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if(progress.isIndeterminate){
@@ -532,7 +443,7 @@ abstract class ThemingBase {
             } else {
                 progress.progressTintList = ColorStateList.valueOf(color)
                 progress.progressBackgroundTintList = ColorStateList.valueOf(colorText)
-
+                progress.secondaryProgressTintList = ColorStateList.valueOf(colorProgressBarSecondary)
                 val colorRipple = ColorUtils.setAlphaComponent(colorText, (255 * alphaCompound).toInt())
                 progress.background = RippleDrawable(ColorStateList.valueOf(colorRipple), null, null)
             }
@@ -568,11 +479,12 @@ abstract class ThemingBase {
     }
 
     fun themeEditText(editText: AppCompatEditText){
-        editText.supportBackgroundTintList = ColorStateList.valueOf(colorInputBottomLine)   //нижняя полоска
+
+        ViewCompat.setBackgroundTintList(editText, ColorStateList.valueOf(colorInputBottomLine))    //нижняя полоска
         setCursorDrawableColor(editText, colorInputCursor)          //моргающий курсор
         setHandlesColor(editText, colorInputHandles)                //Захваты выделения
 
-        editText.setTextColor(colorInputText)
+        editText.setTextColor(colorInputTextStateList)
         editText.setHintTextColor(colorInputHint)
         editText.highlightColor = colorInputHighlight
     }
@@ -850,16 +762,16 @@ abstract class ThemingBase {
             val editorClass: Class<*> = if (editorField == null) TextView::class.java else editor.javaClass
 
             val tintedCursorDrawable =
-                getPrivateFieldOrNull<Int>(editText, TextView::class.java, "mCursorDrawableRes")
+                ThemeUtils.getPrivateFieldOrNull<Int>(editText, TextView::class.java, "mCursorDrawableRes")
                     ?.let { ContextCompat.getDrawable(editText.context, it) ?: return }
                     ?.let { ThemeUtils.tintDrawable(it, color) } ?: return
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                modifyPrivateField<Drawable?>(editor, editorClass, "mDrawableForCursor"){
+                ThemeUtils.modifyPrivateField<Drawable?>(editor, editorClass, "mDrawableForCursor"){
                     tintedCursorDrawable
                 }
             } else {
-                modifyPrivateField<Array<Drawable?>?>(editor, editorClass, "mDrawableForCursor"){
+                ThemeUtils.modifyPrivateField<Array<Drawable?>?>(editor, editorClass, "mDrawableForCursor"){
                     arrayOf(tintedCursorDrawable, tintedCursorDrawable)
                 }
             }
@@ -927,9 +839,9 @@ abstract class ThemingBase {
                 "mTextSelectHandleRes"
             )
             for (i in handleNames.indices) {
-                modifyPrivateField<Drawable?>(editor, editorClass, handleNames[i]) {
+                ThemeUtils.modifyPrivateField<Drawable?>(editor, editorClass, handleNames[i]) {
                     val img = it
-                        ?: getPrivateFieldOrNull<Int>(textView, TextView::class.java, resNames[i])
+                        ?: ThemeUtils.getPrivateFieldOrNull<Int>(textView, TextView::class.java, resNames[i])
                             ?.run { ContextCompat.getDrawable(textView.context, this) }
 
                     img?.run { ThemeUtils.tintDrawable(this, color) }
@@ -1001,7 +913,8 @@ abstract class ThemingBase {
     fun themeCheckBox(checkBox: AppCompatCheckBox, @ColorInt colorActive: Int? = null, @ColorInt colorInactive: Int? = null) {
         val colorA = colorActive ?: colorCheckBoxActive
         val colorI = colorInactive ?: colorCheckBoxInactive
-        checkBox.supportButtonTintList = getCompoundColors(colorA, colorI)
+
+        CompoundButtonCompat.setButtonTintList(checkBox, getCompoundColors(colorA, colorI))
         checkBox.setTextColor(colorTextStateList)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -1014,7 +927,7 @@ abstract class ThemingBase {
         val colorA = colorActive ?: colorRadioActive
         val colorI = colorInactive ?: colorRadioInactive
 
-        radioButton.supportButtonTintList = getCompoundColors(colorA, colorI)
+        CompoundButtonCompat.setButtonTintList(radioButton, getCompoundColors(colorA, colorI))
         radioButton.setTextColor(colorTextStateList)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -1094,23 +1007,40 @@ abstract class ThemingBase {
         return null
     }
 
+    fun themeToolbar(toolbar: Toolbar) {
+        themeViewBack(toolbar, colorActionBar)
+        themeAllMenuIcons(toolbar.menu, colorActionBarIcons)
+
+        toolbar.navigationIcon = ThemeUtils.tintDrawable(toolbar.navigationIcon, colorActionBarIcons)
+        toolbar.setTitleTextColor(colorActionBarText)
+        toolbar.setSubtitleTextColor(colorActionBarTextSecondary)
+    }
+
     open fun themeAllMenuIcons(menu: Menu, @ColorInt color: Int? = null) {
         val iconColor = color?: colorActionBarIcons
         for (i in 0 until menu.size()) {
             val item = menu.getItem(i)
-            item.icon?.let {
-                val tintedDrawable = ThemeUtils.tintDrawable(it, iconColor)
-                item.icon = tintedDrawable
+            themeMenuItem(item, iconColor)
+            if(item.hasSubMenu()){
+                themeAllMenuIcons(item.subMenu, iconColor)
             }
-            item.actionView
-                ?.findViewById<View>(R.id.expand_activities_button)
-                ?.let { it.findViewById<View>(R.id.image) as? ImageView }
-                ?.let {
-                    val tintedDrawable = ThemeUtils.tintDrawable(it.drawable, iconColor)
-                    it.setImageDrawable(tintedDrawable)
-                }
         }
     }
 
+    fun themeMenuItem(item: MenuItem, color: Int) {
+        val iconColor = color?: colorActionBarIcons
+        item.icon?.let {
+            val tintedDrawable = ThemeUtils.tintDrawable(it, iconColor)
+            item.icon = tintedDrawable
+        }
+        item.actionView
+            ?.findViewById<View?>(R.id.expand_activities_button)
+            ?.findViewById<ImageView?>(R.id.image)
+            ?.let {
+                if (it.drawable != null) {
+                    it.setImageDrawable(ThemeUtils.tintDrawable(it.drawable, iconColor))
+                }
+            }
+    }
 
 }

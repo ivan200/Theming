@@ -1,8 +1,6 @@
 package com.ivan200.theming.settings
 
 import android.content.Context
-import com.ivan200.theming.Theming
-import com.ivan200.theming.preferences.Prefs
 import kotlin.reflect.KMutableProperty0
 
 //
@@ -20,32 +18,21 @@ abstract class SettingPref<T>(context: Context) : Setting(context) {
     open var value: T?
         get() = prefProperty.get()
         set(value)  =  prefProperty.set(value)
-    abstract val defaultValue: T
-    open val anyValue get() = value ?: defaultValue
+
+    abstract val defaultValue: ()-> T
+    open val anyValue get() = value ?: defaultValue.invoke()
     open val useDefault get() = value == null
 }
 
-abstract class ColorSetting(context: Context) : SettingPref<Int>(context)
-abstract class CheckSetting(context: Context) : SettingPref<Boolean>(context)
-abstract class HeaderSetting(context: Context) : Setting(context)
+class ColorSetting(context: Context,
+                   override val prefProperty: KMutableProperty0<Int?>,
+                   override val defaultValue: ()-> Int,
+                   override val subTitle: String ) : SettingPref<Int>(context)
 
-class SECTION_DEFAULTS(context: Context) : HeaderSetting(context) {
-    override val title: String get() = "Основные цвета"
-}
+class CheckSetting(context: Context,
+                   override val prefProperty: KMutableProperty0<Boolean?>,
+                   override val defaultValue: ()-> Boolean,
+                   override val subTitle: String ) : SettingPref<Boolean>(context)
 
-class COLOR_PRIMARY(context: Context) : ColorSetting(context) {
-    override val prefProperty get() = Prefs::colorPrimary
-    override val defaultValue: Int get() = Theming.colorPrimary
-    override val subTitle: String get() = "Основной цвет подсветки"
-}
-class COLOR_BACKGROUND(context: Context) : ColorSetting(context) {
-    override val prefProperty get() = Prefs::colorBackground
-    override val defaultValue: Int get() = Theming.colorBackground
-    override val subTitle: String get() = "Цвет фона"
-}
-class NAVBAR_DRAW_SYSTEM_BAR(context: Context) : CheckSetting(context) {
-    override val prefProperty get() = Prefs::navBarDrawSystemBar
-    override val defaultValue: Boolean get() = Theming.navBarDrawSystemBar
-    override val subTitle: String get() = "Отрисовывать ли системную плашку под навбаром если его цвет прозрачный"
-}
-
+class HeaderSetting(context: Context,
+                    override val title: String) : Setting(context)

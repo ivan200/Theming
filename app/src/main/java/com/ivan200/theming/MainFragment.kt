@@ -53,6 +53,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main), Toolbar.OnMenuItemCli
         if (this.javaClass.name == (findNavController().currentDestination as FragmentNavigator.Destination).className) {
             menu.clear()
             inflater.inflate(R.menu.view_main_actions, menu)
+            Theming.themeAllMenuIcons(menu)
         }
         super.onCreateOptionsMenu(menu, inflater)
     }

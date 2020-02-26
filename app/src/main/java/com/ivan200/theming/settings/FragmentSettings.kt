@@ -8,6 +8,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.ivan200.theming.BaseFragment
 import com.ivan200.theming.R
 import com.ivan200.theming.Theming
+import com.ivan200.theming.preferences.Prefs
 import com.ivan200.theming.showIf
 
 //
@@ -52,10 +53,9 @@ class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
     fun getPrefsList(): List<Setting> {
         val c = requireContext()
         return listOf(
-            SECTION_DEFAULTS(c),
-            COLOR_PRIMARY(c),
-            COLOR_BACKGROUND(c),
-            NAVBAR_DRAW_SYSTEM_BAR(c)
+            HeaderSetting(mActivity, "Основные цвета"),
+            ColorSetting(mActivity, Prefs::colorPrimary,    Theming::colorPrimary, "Основной цвет подсветки"),
+            ColorSetting(mActivity, Prefs::colorBackground, Theming::colorBackground, "Цвет фона")
         )
     }
 }

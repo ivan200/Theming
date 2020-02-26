@@ -33,7 +33,7 @@ class AdapterSettings(
         return when (viewType) {
             ViewHolderSettingColor.layoutId -> ViewHolderSettingColor(view, activity)
             ViewHolderSettingCheckBox.layoutId -> ViewHolderSettingCheckBox(view, activity)
-            ViewHolderSettingHeader.layoutId -> ViewHolderSettingCheckBox(view, activity)
+            ViewHolderSettingHeader.layoutId -> ViewHolderSettingHeader(view)
             else -> throw NotImplementedError()
         }
     }

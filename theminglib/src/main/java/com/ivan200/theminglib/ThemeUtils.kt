@@ -37,7 +37,8 @@ object ThemeUtils {
     }
 
 
-    fun tintDrawable(drawable: Drawable, @ColorInt color: Int): Drawable {
+    fun tintDrawable(drawable: Drawable?, @ColorInt color: Int): Drawable? {
+        if(drawable == null) return null
         (drawable as? VectorDrawableCompat)
             ?.apply { setTintList(ColorStateList.valueOf(color)) }
             ?.let { return it }
@@ -223,5 +224,55 @@ object ThemeUtils {
                     InsetDrawable(it, left, top, right, bottom)
                 } ?: it
             }
+    }
+
+    fun <T> modifyPrivateFieldThroughEditor(
+        obj: Any,
+        objClass: Class<*>,
+        editorName: String,
+        fieldName: String,
+        modify: (T?) -> T?
+    ) {
+        try {
+            objClass
+                .getDeclaredField(editorName)
+                .apply { isAccessible = true }
+                .get(obj)
+                ?.apply { modifyPrivateField(this, this::class.java, fieldName, modify) }
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
+    }
+
+    fun <T> modifyPrivateField(obj: Any, clazz: Class<*>, fieldName: String, modify: (T?) -> T?) {
+        try {
+            clazz
+                .getDeclaredField(fieldName)
+                .apply { isAccessible = true }
+                .run {
+                    val field = try { get(obj) as T? } catch (ex: NullPointerException) { null }
+                    set(obj, modify(field))
+                }
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
+    }
+
+    fun <T> getPrivateFieldOrNull(obj: Any, clazz: Class<*>, fieldName: String): T? {
+        var result: T? = null
+        try {
+            clazz.getDeclaredField(fieldName)
+                .apply { isAccessible = true }
+                .run {
+                    result = try {
+                        get(obj) as T?
+                    } catch (ex: NullPointerException) {
+                        null
+                    }
+                }
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
+        return result
     }
 }
