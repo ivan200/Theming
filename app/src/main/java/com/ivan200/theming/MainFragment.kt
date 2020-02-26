@@ -20,6 +20,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main), Toolbar.OnMenuItemCli
     private val navigateLogin = Navigation.createNavigateOnClickListener(R.id.action_mainFragment_to_loginFragment, Bundle())
     private val navigateProgress = Navigation.createNavigateOnClickListener(R.id.action_mainFragment_to_fragmentProgress, Bundle())
     private val navigatePrefs = Navigation.createNavigateOnClickListener(R.id.action_mainFragment_to_fragmentPreferences, Bundle())
+    private val navigateButtons = Navigation.createNavigateOnClickListener(R.id.action_mainFragment_to_fragmentButtons, Bundle())
 
     val button1 get() = requireView().findViewById<Button>(R.id.button1)
     val button2 get() = requireView().findViewById<Button>(R.id.button2)
@@ -45,6 +46,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main), Toolbar.OnMenuItemCli
         }
         button2.setOnClickListener {
 //            mActivity.launchActivity<SecondActivity>()
+            navigateButtons.onClick(it)
         }
 
     }

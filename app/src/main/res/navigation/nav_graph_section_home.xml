@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_mainFragment_to_fragmentPreferences"
             app:destination="@id/fragmentPreferences" />
+        <action
+            android:id="@+id/action_mainFragment_to_fragmentButtons"
+            app:destination="@id/fragmentButtons" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -36,6 +39,12 @@
         android:name="com.ivan200.theming.settings.FragmentSettings"
         android:label="FragmentPreferences"
         tools:layout="@layout/fragment_prefs"
+        />
+    <fragment
+        android:id="@+id/fragmentButtons"
+        android:name="com.ivan200.theming.FragmentButtons"
+        android:label="FragmentButtons"
+        tools:layout="@layout/fragment_buttons"
         />
 </navigation>
 

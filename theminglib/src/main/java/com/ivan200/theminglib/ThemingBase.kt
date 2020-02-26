@@ -1,5 +1,6 @@
 package com.ivan200.theminglib
 
+import android.app.Activity
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -11,8 +12,9 @@ import android.view.*
 import android.widget.*
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.*
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatSeekBar
+import androidx.appcompat.widget.SwitchCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
@@ -30,6 +32,8 @@ import com.ivan200.theminglib.ThemeUtils.isColorBright
 import com.ivan200.theminglib.ThemeUtils.setBackgroundColorSavePadding
 import com.ivan200.theminglib.ThemeUtils.setBackgroundResourceSavePadding
 import com.ivan200.theminglib.ThemeUtils.setBackgroundSavePadding
+import com.ivan200.theminglib.ThemeUtils.setDecorFlag
+import com.ivan200.theminglib.ThemeUtils.setWindowFlag
 import com.ivan200.theminglib.ThemeUtils.spToPx
 import java.util.*
 import kotlin.math.sqrt
@@ -194,11 +198,76 @@ abstract class ThemingBase {
     private val alphaCompound = 0.3
 
     //Вызывать внутри onCreate
-    fun themeActivity(activity: AppCompatActivity){
+    fun themeActivity(activity: Activity){
         themeStatusBar(activity.window)
         themeNavigationBar(activity.window)
         themeOverScrollGlowColor(activity.resources, colorOverScroll)
     }
+
+    fun themeView(v: View): Boolean {
+        //skip this classes and it's subviews
+        if(v is RecyclerView ||
+            v is ListView ||
+            v is ViewPager ||
+            v::class.java.simpleName == "ViewPager2"){
+            return true
+        }
+
+        when (v) {
+            is TextInputLayout -> {
+                themeTextInputLayout(v)
+                return false
+            }
+            is AppCompatEditText -> themeEditText(v)
+            is SeekBar -> themeSeekBar(v)
+            is ProgressBar -> themeProgressBar(v)
+            is CheckBox -> themeCheckBox(v)
+            is RadioButton -> themeRadioButton(v)
+            is Switch -> themeSwitch(v)
+            is SwitchCompat -> themeSwitch(v)
+            is BottomNavigationView -> themeBottomNavigation(v)
+            is FloatingActionButton -> themeFab(v)
+            is Toolbar -> themeToolbar(v)
+            is Button -> themeButton(v)
+            is TextView -> themeTextView(v)
+            is ImageView -> themeImageView(v)
+            else -> return false
+        }
+        return true
+    }
+
+    //применяет цвета для списка вьюшек
+    fun themeViews(vararg view: View?) {
+        view.forEach {
+            if(it != null) {
+                val viewThemed = themeView(it)
+                if (!viewThemed && it is ViewGroup) {
+                    themeViewBack(it)
+                }
+            }
+        }
+    }
+
+    //применяет цвета для вьюшки и всех её сабвьюшек
+    fun themeViewAndSubviews(view: View) {
+        if(view is ViewGroup){
+            themeViewBack(view)
+            themeChild(view)
+        } else{
+            themeView(view)
+        }
+    }
+
+    private fun themeChild(view: ViewGroup){
+        for (i in 0 until view.childCount) {
+            val v = view.getChildAt(i)
+            val viewThemed = themeView(v)
+            if(!viewThemed && v is ViewGroup){
+                themeChild(v)
+            }
+        }
+    }
+
 
     //Перекрашивание цвета оверскролла на всех RecyclerView на api<21. Достаточно вызвать 1 раз в onCreate приложения
     fun themeOverScrollGlowColor(res: android.content.res.Resources, colorID: Int) {
@@ -314,79 +383,6 @@ abstract class ThemingBase {
                 window.navigationBarDividerColor = colorDiv
             }
         }
-    }
-
-    fun setWindowFlag(win: Window, bits: Int, state: Boolean) {
-        val flags = win.attributes.flags
-        win.attributes.flags = if (state) flags or bits else flags and bits.inv()
-    }
-
-    fun setDecorFlag(win: Window, bits: Int, state: Boolean) {
-        val flags = win.decorView.systemUiVisibility
-        win.decorView.systemUiVisibility = if (state) flags or bits else flags and bits.inv()
-    }
-
-    //применяет цвета для списка вьюшек
-    fun themeViews(vararg view: View?) {
-        view.forEach {
-            if(it != null) {
-                val viewThemed = themeView(it)
-                if (!viewThemed && it is ViewGroup) {
-                    themeViewBack(it)
-                }
-            }
-        }
-    }
-
-    //применяет цвета для вьюшки и всех её сабвьюшек
-    fun themeViewAndSubviews(view: View) {
-        if(view is ViewGroup){
-            themeViewBack(view)
-            themeChild(view)
-        } else{
-            themeView(view)
-        }
-    }
-
-    private fun themeChild(view: ViewGroup){
-        for (i in 0 until view.childCount) {
-            val v = view.getChildAt(i)
-            val viewThemed = themeView(v)
-            if(!viewThemed && v is ViewGroup){
-                themeChild(v)
-            }
-        }
-    }
-
-    fun themeView(v: View): Boolean {
-        //skip this classes and it's subviews
-        if(v is RecyclerView ||
-            v is ListView ||
-            v is ViewPager ||
-            v::class.java.simpleName == "ViewPager2"){
-            return true
-        }
-
-        when (v) {
-            is TextInputLayout -> {
-                themeTextInputLayout(v)
-                return false
-            }
-            is AppCompatEditText -> themeEditText(v)
-            is SeekBar -> themeSeekBar(v)
-            is ProgressBar -> themeProgressBar(v)
-            is AppCompatCheckBox -> themeCheckBox(v)
-            is AppCompatRadioButton -> themeRadioButton(v)
-            is SwitchCompat -> themeSwitch(v)
-            is BottomNavigationView -> themeBottomNavigation(v)
-            is FloatingActionButton -> themeFab(v)
-            is Toolbar -> themeToolbar(v)
-            is Button -> themeButton(v)
-            is TextView -> themeTextView(v)
-            is ImageView -> themeImageView(v)
-            else -> return false
-        }
-        return true
     }
 
     fun themeViewBack(layout: View, @ColorInt color: Int? = null) {
@@ -910,7 +906,7 @@ abstract class ThemingBase {
         }
     }
 
-    fun themeCheckBox(checkBox: AppCompatCheckBox, @ColorInt colorActive: Int? = null, @ColorInt colorInactive: Int? = null) {
+    fun themeCheckBox(checkBox: CheckBox, @ColorInt colorActive: Int? = null, @ColorInt colorInactive: Int? = null) {
         val colorA = colorActive ?: colorCheckBoxActive
         val colorI = colorInactive ?: colorCheckBoxInactive
 
@@ -923,7 +919,7 @@ abstract class ThemingBase {
         }
     }
 
-    fun themeRadioButton(radioButton: AppCompatRadioButton, @ColorInt colorActive: Int? = null, @ColorInt colorInactive: Int? = null) {
+    fun themeRadioButton(radioButton: RadioButton, @ColorInt colorActive: Int? = null, @ColorInt colorInactive: Int? = null) {
         val colorA = colorActive ?: colorRadioActive
         val colorI = colorInactive ?: colorRadioInactive
 
@@ -954,7 +950,7 @@ abstract class ThemingBase {
         )
     }
 
-    fun themeSwitch(switchCompat: SwitchCompat) {
+    fun themeSwitch(switch: CompoundButton) {
         val checkedFront = colorSwitchActive
         val uncheckedFront = colorSwitchInactive
         val colorStateTrack = getCompoundColors(checkedFront, uncheckedFront)
@@ -963,18 +959,23 @@ abstract class ThemingBase {
         val uncheckedBack = ColorUtils.setAlphaComponent(colorText, (255 * alphaCompound).toInt())
         val colorStateThumb = getCompoundColors(checkedBack, uncheckedBack)
 
-        switchCompat.thumbTintList = colorStateTrack
-        switchCompat.trackTintList = colorStateThumb
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            switchCompat.backgroundTintList = colorStateThumb
+        if (switch is SwitchCompat) {
+            switch.thumbTintList = colorStateTrack
+            switch.trackTintList = colorStateThumb
+        } else if (switch is Switch && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            switch.thumbTintList = colorStateTrack
+            switch.trackTintList = colorStateThumb
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            switchCompat.background = RippleDrawable(ColorStateList.valueOf(checkedBack), null, null)
+            switch.backgroundTintList = colorStateThumb
         }
 
-        switchCompat.setTextColor(colorTextStateList)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            switch.background = RippleDrawable(ColorStateList.valueOf(checkedBack), null, null)
+        }
+
+        switch.setTextColor(colorTextStateList)
     }
 
 

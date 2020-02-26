@@ -11,6 +11,7 @@ import android.graphics.drawable.*
 import android.os.Build
 import android.util.TypedValue
 import android.view.View
+import android.view.Window
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -36,6 +37,15 @@ object ThemeUtils {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, number.toFloat(), res.displayMetrics)
     }
 
+    fun setWindowFlag(win: Window, bits: Int, state: Boolean) {
+        val flags = win.attributes.flags
+        win.attributes.flags = if (state) flags or bits else flags and bits.inv()
+    }
+
+    fun setDecorFlag(win: Window, bits: Int, state: Boolean) {
+        val flags = win.decorView.systemUiVisibility
+        win.decorView.systemUiVisibility = if (state) flags or bits else flags and bits.inv()
+    }
 
     fun tintDrawable(drawable: Drawable?, @ColorInt color: Int): Drawable? {
         if(drawable == null) return null
