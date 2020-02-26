@@ -1,4 +1,4 @@
-package com.ivan200.theming.preference
+package com.ivan200.theming.settings
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,7 +9,7 @@ import com.ivan200.theming.MainActivity
 // Created by Ivan200 on 21.02.2020.
 //
 
-class PreferenceAdapter(
+class AdapterSettings(
     val activity: MainActivity,
     val list: List<Setting>) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -20,9 +20,10 @@ class PreferenceAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (list[position]) {
-            is ColorPref -> ViewHolderPrefColor.layoutId
-            is CheckPref -> ViewHolderPrefCheckBox.layoutId
-            else -> ViewHolderPrefHeader.layoutId
+            is ColorSetting -> ViewHolderSettingColor.layoutId
+            is CheckSetting -> ViewHolderSettingCheckBox.layoutId
+            is HeaderSetting -> ViewHolderSettingHeader.layoutId
+            else -> throw NotImplementedError()
         }
     }
 
@@ -30,9 +31,10 @@ class PreferenceAdapter(
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
 
         return when (viewType) {
-            ViewHolderPrefColor.layoutId -> ViewHolderPrefColor(view, activity)
-            ViewHolderPrefCheckBox.layoutId -> ViewHolderPrefCheckBox(view, activity)
-            else -> ViewHolderPrefHeader(view)
+            ViewHolderSettingColor.layoutId -> ViewHolderSettingColor(view, activity)
+            ViewHolderSettingCheckBox.layoutId -> ViewHolderSettingCheckBox(view, activity)
+            ViewHolderSettingHeader.layoutId -> ViewHolderSettingCheckBox(view, activity)
+            else -> throw NotImplementedError()
         }
     }
 

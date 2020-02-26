@@ -1,6 +1,6 @@
 package com.ivan200.theming
 
-import com.ivan200.theming.preference.Prefs
+import com.ivan200.theming.preferences.Prefs
 import com.ivan200.theminglib.ThemingBase
 
 object Theming : ThemingBase(){
@@ -14,13 +14,7 @@ object Theming : ThemingBase(){
 //    override var colorPrimary: Int = colors["main"] ?: Prefs.colorPrimary
 //    override var colorBackground: Int = colors["background"] ?: Prefs.colorBackground
 
-
     override val colorPrimary: Int get() = Prefs.colorPrimary ?: super.colorPrimary
-
-//light
-//    override val colorBackground: Int get() = Color.parseColor("#f5f5f5")
-
-    //dark
     override val colorBackground: Int get() = Prefs.colorBackground ?: super.colorBackground
 
 

@@ -1,4 +1,4 @@
-package com.ivan200.theming.preference
+package com.ivan200.theming.settings
 
 import android.view.View
 import android.widget.FrameLayout
@@ -15,10 +15,10 @@ import com.ivan200.theminglib.ThemeUtils
 // Created by Ivan200 on 25.02.2020.
 //
 
-class ViewHolderPrefColor (
+class ViewHolderSettingColor (
     view: View,
     val mainActivity: MainActivity
-) : RecyclerView.ViewHolder(view), PreferenceAdapter.PrefBinder, View.OnClickListener {
+) : RecyclerView.ViewHolder(view), AdapterSettings.PrefBinder, View.OnClickListener {
     companion object {
         val layoutId: Int = R.layout.cell_setting_color
     }
@@ -29,7 +29,7 @@ class ViewHolderPrefColor (
     val colorViewBorder : FrameLayout get() = itemView.findViewById(R.id.v_color_border)
     val btnClear: ImageButton get() = itemView.findViewById(R.id.btn_clear)
 
-    private lateinit var _setting: ColorPref
+    private lateinit var _setting: ColorSetting
 
     init {
         itemView.setOnClickListener(this)
@@ -42,7 +42,7 @@ class ViewHolderPrefColor (
     }
 
     override fun bind(setting: Setting) {
-        if (setting !is ColorPref) return
+        if (setting !is ColorSetting) return
 
         _setting = setting
         title.text = setting.title

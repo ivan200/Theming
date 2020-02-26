@@ -1,4 +1,4 @@
-package com.ivan200.theming.preference
+package com.ivan200.theming.settings
 
 import android.view.View
 import android.widget.CheckBox
@@ -14,10 +14,10 @@ import com.ivan200.theming.showIf
 // Created by Ivan200 on 25.02.2020.
 //
 
-class ViewHolderPrefCheckBox (
+class ViewHolderSettingCheckBox (
     view: View,
     val activity: MainActivity
-) : RecyclerView.ViewHolder(view), PreferenceAdapter.PrefBinder,  View.OnClickListener {
+) : RecyclerView.ViewHolder(view), AdapterSettings.PrefBinder,  View.OnClickListener {
     companion object {
         val layoutId: Int = R.layout.cell_setting_checkbox
     }
@@ -27,7 +27,7 @@ class ViewHolderPrefCheckBox (
     val cbSetting: CheckBox get() = itemView.findViewById(R.id.cb_setting)
     val btnClear: ImageButton get() = itemView.findViewById(R.id.btn_clear)
 
-    private lateinit var _setting: CheckPref
+    private lateinit var _setting: CheckSetting
 
     init {
         itemView.setOnClickListener(this)
@@ -40,7 +40,7 @@ class ViewHolderPrefCheckBox (
     }
 
     override fun bind(setting: Setting) {
-        if (setting !is CheckPref) return
+        if (setting !is CheckSetting) return
 
         _setting = setting
         title.text = setting.title

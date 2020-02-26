@@ -2,14 +2,13 @@ package com.ivan200.theming
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.ivan200.theming.preference.ColorPickerDialogCaller
-import com.ivan200.theming.preference.ColorPref
+import com.ivan200.theming.settings.ColorSetting
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 
-class MainActivity : AppCompatActivity(R.layout.activity_main), ColorPickerDialogListener, ColorPickerDialogCaller {
+class MainActivity : AppCompatActivity(R.layout.activity_main), ColorPickerDialogListener {
     var anyColorChangeListener: (() -> Unit)? = null
-    var currentChangingSetting: ColorPref? = null
+    var currentChangingSetting: ColorSetting? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +24,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ColorPickerDialo
         anyColorChangeListener?.invoke()
     }
 
-    override fun changeColorSetting(setting: ColorPref) {
+    fun changeColorSetting(setting: ColorSetting) {
         currentChangingSetting = setting
         ColorPickerDialog.newBuilder()
             .setAllowPresets(false)
@@ -34,7 +33,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ColorPickerDialo
             .show(this)
     }
 
-    fun clearColorSetting(setting: ColorPref) {
+    fun clearColorSetting(setting: ColorSetting) {
         setting.value = null
         anyColorChangeListener?.invoke()
     }

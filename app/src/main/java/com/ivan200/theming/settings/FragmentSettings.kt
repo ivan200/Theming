@@ -1,4 +1,4 @@
-package com.ivan200.theming.preference
+package com.ivan200.theming.settings
 
 import android.os.Bundle
 import android.view.View
@@ -14,10 +14,10 @@ import com.ivan200.theming.showIf
 // Created by Ivan200 on 25.02.2020.
 //
 
-class FragmentPreferences : BaseFragment(R.layout.fragment_prefs) {
+class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
     val recyclerView get() = requireView().findViewById<RecyclerView>(R.id.rv_prefs)
     val fab get() = requireView().findViewById<FloatingActionButton>(R.id.fab)
-    val adapter by lazy { PreferenceAdapter(mActivity, getPrefsList()) }
+    val adapter by lazy { AdapterSettings(mActivity, getPrefsList()) }
 
     var hasColorChanges = false
 

@@ -33,7 +33,7 @@
         />
     <fragment
         android:id="@+id/fragmentPreferences"
-        android:name="com.ivan200.theming.preference.FragmentPreferences"
+        android:name="com.ivan200.theming.settings.FragmentSettings"
         android:label="FragmentPreferences"
         tools:layout="@layout/fragment_prefs"
         />

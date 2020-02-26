@@ -1,4 +1,4 @@
-package com.ivan200.theming.preference
+package com.ivan200.theming.settings
 
 import android.view.View
 import android.widget.TextView
@@ -10,7 +10,7 @@ import com.ivan200.theming.Theming
 // Created by Ivan200 on 25.02.2020.
 //
 
-class ViewHolderPrefHeader (view: View) : RecyclerView.ViewHolder(view), PreferenceAdapter.PrefBinder {
+class ViewHolderSettingHeader (view: View) : RecyclerView.ViewHolder(view), AdapterSettings.PrefBinder {
     companion object {
         val layoutId: Int = R.layout.cell_setting_header
     }

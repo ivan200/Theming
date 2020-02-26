@@ -1,4 +1,4 @@
-package com.ivan200.theming.preference
+package com.ivan200.theming.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
