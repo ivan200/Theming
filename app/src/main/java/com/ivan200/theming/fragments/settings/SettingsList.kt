@@ -1,4 +1,4 @@
-package com.ivan200.theming.settings
+package com.ivan200.theming.fragments.settings
 
 import android.content.Context
 import kotlin.reflect.KMutableProperty0

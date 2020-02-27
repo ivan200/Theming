@@ -1,4 +1,4 @@
-package com.ivan200.theming.settings
+package com.ivan200.theming.fragments.settings
 
 import android.view.View
 import android.widget.TextView

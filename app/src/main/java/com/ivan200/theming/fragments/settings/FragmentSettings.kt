@@ -1,13 +1,13 @@
-package com.ivan200.theming.settings
+package com.ivan200.theming.fragments.settings
 
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.ivan200.theming.BaseFragment
 import com.ivan200.theming.R
 import com.ivan200.theming.Theming
+import com.ivan200.theming.fragments.BaseFragment
 import com.ivan200.theming.preferences.Prefs
 import com.ivan200.theming.showIf
 

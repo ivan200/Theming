@@ -35,4 +35,3 @@ fun <T : View> T.hideIf(condition: () -> Boolean): T {
 fun <T : View> T.invisibleIf(condition: () -> Boolean): T {
     return if (condition()) invisible() else show()
 }
-

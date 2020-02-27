@@ -1,4 +1,4 @@
-package com.ivan200.theming.settings
+package com.ivan200.theming.fragments.settings
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

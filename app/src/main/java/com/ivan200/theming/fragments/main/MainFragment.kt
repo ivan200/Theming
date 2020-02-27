@@ -1,15 +1,18 @@
-package com.ivan200.theming
+package com.ivan200.theming.fragments.main
 
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.ivan200.theming.*
+import com.ivan200.theming.fragments.BaseFragment
 
 
 //
@@ -22,33 +25,39 @@ class MainFragment : BaseFragment(R.layout.fragment_main), Toolbar.OnMenuItemCli
     private val navigatePrefs = Navigation.createNavigateOnClickListener(R.id.action_mainFragment_to_fragmentPreferences, Bundle())
     private val navigateButtons = Navigation.createNavigateOnClickListener(R.id.action_mainFragment_to_fragmentButtons, Bundle())
 
-    val button1 get() = requireView().findViewById<Button>(R.id.button1)
-    val button2 get() = requireView().findViewById<Button>(R.id.button2)
+    val recyclerView get() = requireView().findViewById<RecyclerView>(R.id.rv_main)
+    val adapter by lazy {
+        MainAdapter(
+            getMainCellList()
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setHasOptionsMenu(true)
         toolbar?.setOnMenuItemClickListener(this)
+        Theming.themeViews(toolbar!!, view)
 
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+    }
 
-        Theming.themeViews(button1, toolbar!!, view)
-
-        button1.setOnClickListener {
-            navigateProgress.onClick(it)
-
-//            ColorPickerDialog.newBuilder()
-//                .setAllowPresets(false)
-//                .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
-//                .setColor(Color.BLACK)
-//                .show(activity)
-
-        }
-        button2.setOnClickListener {
-//            mActivity.launchActivity<SecondActivity>()
-            navigateButtons.onClick(it)
-        }
-
+    fun getMainCellList() : List<MainCellInfo>{
+        return listOf(
+            MainCellInfo(
+                "ProgressBars",
+                navigateProgress
+            ),
+            MainCellInfo(
+                "Buttons",
+                navigateButtons
+            ),
+            MainCellInfo(
+                "Inputs",
+                navigateLogin
+            )
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

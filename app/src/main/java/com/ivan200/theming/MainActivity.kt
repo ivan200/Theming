@@ -2,7 +2,7 @@ package com.ivan200.theming
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.ivan200.theming.settings.ColorSetting
+import com.ivan200.theming.fragments.settings.ColorSetting
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 

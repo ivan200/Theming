@@ -30,7 +30,7 @@
             android:clickable="true"
             android:focusable="true"
             app:fabSize="normal"
-            app:srcCompat="@drawable/ic_done" />
+            app:srcCompat="@drawable/ic_renew" />
 
     </RelativeLayout>
 

@@ -6,7 +6,7 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.ivan200.theming.MainFragment"
+        android:name="com.ivan200.theming.fragments.main.MainFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_main"
         >
@@ -25,24 +25,24 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.ivan200.theming.LoginFragment"
+        android:name="com.ivan200.theming.fragments.inputs.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login"/>
     <fragment
         android:id="@+id/fragmentProgress"
-        android:name="com.ivan200.theming.FragmentProgress"
+        android:name="com.ivan200.theming.fragments.progress.FragmentProgress"
         android:label="FragmentProgress"
         tools:layout="@layout/fragment_progress"
         />
     <fragment
         android:id="@+id/fragmentPreferences"
-        android:name="com.ivan200.theming.settings.FragmentSettings"
+        android:name="com.ivan200.theming.fragments.settings.FragmentSettings"
         android:label="FragmentPreferences"
         tools:layout="@layout/fragment_prefs"
         />
     <fragment
         android:id="@+id/fragmentButtons"
-        android:name="com.ivan200.theming.FragmentButtons"
+        android:name="com.ivan200.theming.fragments.buttons.FragmentButtons"
         android:label="FragmentButtons"
         tools:layout="@layout/fragment_buttons"
         />
