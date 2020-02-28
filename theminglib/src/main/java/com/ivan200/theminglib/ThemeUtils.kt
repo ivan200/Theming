@@ -21,10 +21,19 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.ViewCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import java.util.*
 
 //
 // Created by Ivan200 on 25.02.2020.
 //
+
+inline fun <T,K,V> Iterable<T>.toHashMap(getKey: Function1<T, K>, getValue: Function1<T, V>): HashMap<K, V> {
+    val map = HashMap<K,V>()
+    for (item in this) {
+        map[getKey(item)] = getValue(item)
+    }
+    return map
+}
 
 object ThemeUtils {
     fun spToPx(number:Number, context: Context? = null): Float {

@@ -32,16 +32,21 @@ class ViewHolderSettingCheckBox (
     init {
         itemView.setOnClickListener(this)
         btnClear.setOnClickListener(this::onBtnClearClick)
+    }
 
+    // Обычно применение цветов достаточно в блоке init,
+    // но так как это список цветов, и на этом экране можно их менять,
+    // приходится применять цвета на каждый bind
+    fun colorize(){
         Theming.themeCellBg(itemView)
         Theming.themeViews(title, cbSetting)
         Theming.themeIcon(btnClear)
-        Theming.themeTextView(subTitle, isSecondary = true)
+        Theming.themeTextViewSecondary(subTitle)
     }
 
     override fun bind(setting: Setting) {
         if (setting !is CheckSetting) return
-
+        colorize()
         _setting = setting
         title.text = setting.title
 

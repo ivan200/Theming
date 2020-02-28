@@ -35,23 +35,45 @@ abstract class PrefsBase {
         abstract fun setValue(prefs: SharedPreferences, key: String, value: T)
     }
 
-    inner class BooleanPref(private val defValue: Boolean? = null, name: String? = null) : AnyPref<Boolean?>(name) {
+    fun smartEdit(func: SharedPreferences.Editor.() -> Unit) {
+        sp.edit().apply { func.invoke(this) }.apply()
+    }
+
+    inner class BooleanPref(private val defValue: Boolean? = null, name: String? = null) :
+        AnyPref<Boolean?>(name) {
         override fun getValue(prefs: SharedPreferences, key: String): Boolean? {
             return if (prefs.contains(key)) prefs.getBoolean(key, defValue ?: false) else defValue
         }
 
         override fun setValue(prefs: SharedPreferences, key: String, value: Boolean?) {
-            prefs.edit().apply { if (value == null) remove(key) else putBoolean(key, value) }.apply()
+            smartEdit { if (value == null) this.remove(key) else putBoolean(key, value) }
         }
     }
 
-    inner class IntPref(private val defValue: Int? = null, name: String? = null) : AnyPref<Int?>(name) {
+    inner class IntPref(private val defValue: Int? = null, name: String? = null) :
+        AnyPref<Int?>(name) {
         override fun getValue(prefs: SharedPreferences, key: String): Int? {
             return if (prefs.contains(key)) prefs.getInt(key, defValue ?: 0) else defValue
         }
 
         override fun setValue(prefs: SharedPreferences, key: String, value: Int?) {
-            prefs.edit().apply { if (value == null) remove(key) else putInt(key, value) }.apply()
+            smartEdit { if (value == null) remove(key) else putInt(key, value) }
         }
+    }
+
+    fun getIntPref(key: String, defValue: Int? = null): Int? {
+        return if (sp.contains(key)) sp.getInt(key, defValue ?: 0) else defValue
+    }
+
+    fun setIntPref(key: String, value: Int?) {
+        smartEdit { if (value == null) remove(key) else putInt(key, value) }
+    }
+
+    fun getBoolPref(key: String, defValue: Boolean? = null): Boolean? {
+        return if (sp.contains(key)) sp.getBoolean(key, defValue ?: false) else defValue
+    }
+
+    fun setBoolPref(key: String, value: Boolean?) {
+        smartEdit { if (value == null) remove(key) else putBoolean(key, value) }
     }
 }

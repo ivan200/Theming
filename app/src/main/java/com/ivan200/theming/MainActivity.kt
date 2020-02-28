@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ColorPickerDialo
         currentChangingSetting = setting
         ColorPickerDialog.newBuilder()
             .setAllowPresets(false)
+            .setShowAlphaSlider(setting.allowTransparent)
             .setDialogType(ColorPickerDialog.TYPE_CUSTOM)
             .setColor(setting.anyValue)
             .show(this)

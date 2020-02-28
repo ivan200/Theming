@@ -1,11 +1,21 @@
 package com.ivan200.theming
 
+import android.util.Log
 import android.view.View
+import java.text.SimpleDateFormat
+import java.util.*
 
 //
 // Created by Ivan200 on 17.02.2020.
 //
-
+fun printToLogThis(message: String = "") {
+    val stackTrace = Thread.currentThread().stackTrace
+    if (stackTrace.size > 2) {
+        val stackTraceElement = stackTrace[3]
+        val time = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()).format(System.currentTimeMillis())
+        Log.w("Log", "$time $stackTraceElement $message")
+    }
+}
 
 fun Boolean?.toInt() = if(this == null) -1 else if(this) 1 else 0
 

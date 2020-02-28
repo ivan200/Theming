@@ -1,7 +1,10 @@
 package com.ivan200.theming.fragments.settings
 
 import android.content.Context
-import kotlin.reflect.KMutableProperty0
+import com.ivan200.theming.Theming
+import com.ivan200.theming.preferences.Prefs
+import com.ivan200.theminglib.ThemeColor
+import com.ivan200.theminglib.ThemeFlag
 
 //
 // Created by Ivan200 on 21.02.2020.
@@ -12,27 +15,31 @@ abstract class Setting(val context: Context) {
     open val subTitle: String get() = ""
 }
 
-abstract class SettingPref<T>(context: Context) : Setting(context) {
-    override val title: String get() = prefProperty.name.capitalize()
-    abstract val prefProperty: KMutableProperty0<T?>
-    open var value: T?
-        get() = prefProperty.get()
-        set(value)  =  prefProperty.set(value)
-
-    abstract val defaultValue: ()-> T
-    open val anyValue get() = value ?: defaultValue.invoke()
+class ColorSetting(context: Context,
+                   val themeColor: ThemeColor,
+                   override val subTitle: String = "",
+                   val allowTransparent: Boolean = false
+                   ) : Setting(context){
+    override val title: String get() = themeColor.name.capitalize()
+    open var value: Int?
+        get() = Prefs.getIntPref(themeColor.name)
+        set(value) = Prefs.setIntPref(themeColor.name, value)
+    open val anyValue get() = value ?: defaultValue
+    open val defaultValue get() = Theming.getColor(themeColor)
     open val useDefault get() = value == null
 }
 
-class ColorSetting(context: Context,
-                   override val prefProperty: KMutableProperty0<Int?>,
-                   override val defaultValue: ()-> Int,
-                   override val subTitle: String ) : SettingPref<Int>(context)
-
 class CheckSetting(context: Context,
-                   override val prefProperty: KMutableProperty0<Boolean?>,
-                   override val defaultValue: ()-> Boolean,
-                   override val subTitle: String ) : SettingPref<Boolean>(context)
+                   val themeFlag: ThemeFlag,
+                   override val subTitle: String ) : Setting(context){
+    override val title: String get() = themeFlag.name.capitalize()
+    open var value: Boolean?
+        get() = Prefs.getBoolPref(themeFlag.name)
+        set(value) = Prefs.setBoolPref(themeFlag.name, value)
+    open val anyValue get() = value ?: defaultValue
+    open val defaultValue get() = Theming.getFlag(themeFlag)
+    open val useDefault get() = value == null
+}
 
 class HeaderSetting(context: Context,
                     override val title: String) : Setting(context)

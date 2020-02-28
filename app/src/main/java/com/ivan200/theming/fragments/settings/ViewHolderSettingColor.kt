@@ -34,16 +34,21 @@ class ViewHolderSettingColor (
     init {
         itemView.setOnClickListener(this)
         btnClear.setOnClickListener(this::onBtnClearClick)
+    }
 
+    // Обычно применение цветов достаточно в блоке init,
+    // но так как это список цветов, и на этом экране можно их менять,
+    // приходится применять цвета на каждый bind
+    fun colorize(){
         Theming.themeCellBg(itemView)
         Theming.themeViews(title)
-        Theming.themeTextView(subTitle, isSecondary = true)
+        Theming.themeTextViewSecondary(subTitle)
         Theming.themeIcon(btnClear)
     }
 
     override fun bind(setting: Setting) {
         if (setting !is ColorSetting) return
-
+        colorize()
         _setting = setting
         title.text = setting.title
         subTitle.showIf { setting.subTitle.isNotEmpty() }
