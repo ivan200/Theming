@@ -39,7 +39,7 @@ class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
             mActivity.recreate()
         }
 
-        mActivity.anyColorChangeListener = this::onAnyPrefChanged
+        mActivity.anySettingChangeListener = this::onAnyPrefChanged
     }
 
     fun onAnyPrefChanged(){
@@ -63,12 +63,13 @@ class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
             ColorSetting(mActivity, ThemeColor.colorError, ""),
 
             HeaderSetting(mActivity, "Системные компоненты"),
+            ColorSetting(mActivity, ThemeColor.colorWindowBackground, ""),
             ColorSetting(mActivity, ThemeColor.colorStatusBar, "", true),
             ColorSetting(mActivity, ThemeColor.colorStatusBarDark, "", true),
             CheckSetting(mActivity, ThemeFlag.statusDrawSystemBar, ""),
             CheckSetting(mActivity, ThemeFlag.statusLightTheme, ""),
 
-            ColorSetting(mActivity, ThemeColor.colorNavBar, ""),
+            ColorSetting(mActivity, ThemeColor.colorNavBar, "", true),
             ColorSetting(mActivity, ThemeColor.colorNavBarDark, ""),
             CheckSetting(mActivity, ThemeFlag.navBarDrawSystemBar, ""),
             CheckSetting(mActivity, ThemeFlag.navBarLightTheme, ""),

@@ -2,6 +2,7 @@ package com.ivan200.theming
 
 import com.ivan200.theming.preferences.Prefs
 import com.ivan200.theminglib.ThemeColor
+import com.ivan200.theminglib.ThemeFlag
 import com.ivan200.theminglib.ThemingBase
 
 object Theming : ThemingBase(){
@@ -18,6 +19,11 @@ object Theming : ThemingBase(){
 //            else -> null
 //        }
         return newColor ?: super.getColor(color)
+    }
+
+    override fun getFlag(flag: ThemeFlag): Boolean {
+        val newFlag = Prefs.getBoolPref(flag.name)
+        return newFlag ?: super.getFlag(flag)
     }
 
 }

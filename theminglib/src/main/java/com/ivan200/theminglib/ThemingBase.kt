@@ -21,6 +21,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.view.ViewCompat
 import androidx.core.widget.CompoundButtonCompat
 import androidx.core.widget.ImageViewCompat
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -52,6 +53,7 @@ abstract class ThemingBase {
             put(colorBackground) { Color.parseColor("#303030") }
             put(colorFine) { Color.parseColor("#4CAF50") }
             put(colorError) { Color.parseColor("#D50000") }
+            put(colorWindowBackground) { colorBackground.intColor }
             put(colorStatusBar) { Color.BLACK }
             put(colorStatusBarDark) { Color.BLACK }
             put(colorNavBar) { Color.BLACK }
@@ -85,7 +87,7 @@ abstract class ThemingBase {
             put(colorSwitchActive) { colorPrimary.intColor }
             put(colorSwitchInactive) { Color.parseColor(if (isLightTheme) "#ececec" else "#b9b9b9") }
             put(colorFabBackground) { colorPrimary.intColor }
-            put(colorFabIcon) { colorText.intColor }
+            put(colorFabIcon) { getTextColor(colorFabBackground.intColor) }
             put(colorAlertBackground) { colorBackground.intColor }
             put(colorAlertTitle) { colorText.intColor }
             put(colorAlertIcon) { colorText.intColor }
@@ -132,8 +134,7 @@ abstract class ThemingBase {
 
     //Вызывать внутри onCreate
     fun themeActivity(activity: Activity){
-        activity.window.setBackgroundDrawable(ColorDrawable(colorBackground.intColor))
-
+        themeWindowBackground(activity.window)
         themeStatusBar(activity.window)
         themeNavigationBar(activity.window)
         themeOverScrollGlowColor(activity.resources, colorOverScroll.intColor)
@@ -141,14 +142,46 @@ abstract class ThemingBase {
 
     fun themeView(v: View): Boolean {
         //skip this classes and it's subviews
-        if(v is RecyclerView ||
-            v is ListView ||
-            v is ViewPager ||
-            v::class.java.simpleName == "ViewPager2"){
+        if(v::class.java.simpleName == "ViewPager2"){
             return true
         }
 
         when (v) {
+            is ScrollView -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    v.setEdgeEffectColor(colorOverScroll.intColor)
+                } else {
+                    XpEdgeEffect.setColor(v, colorOverScroll.intColor)
+                }
+            }
+            is ViewPager -> XpEdgeEffect.setColor(v, colorOverScroll.intColor)
+            is HorizontalScrollView -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    v.setEdgeEffectColor(colorOverScroll.intColor)
+                } else {
+                    XpEdgeEffect.setColor(v, colorOverScroll.intColor)
+                }
+            }
+            is NestedScrollView -> XpEdgeEffect.setColor(v, colorOverScroll.intColor)
+            is RecyclerView -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    v.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+                        override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                            return EdgeEffect(view.context).apply { color = colorOverScroll.intColor }
+                        }
+                    }
+                } else {
+                    XpEdgeEffect.setColor(v, colorOverScroll.intColor)
+                }
+            }
+            is AbsListView -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    v.setEdgeEffectColor(colorOverScroll.intColor)
+                } else {
+                    XpEdgeEffect.setColor(v, colorOverScroll.intColor)
+                }
+            }
+
             is TextInputLayout -> {
                 themeTextInputLayout(v)
                 return false
@@ -203,24 +236,16 @@ abstract class ThemingBase {
         }
     }
 
-
     //Перекрашивание цвета оверскролла на всех RecyclerView на api<21. Достаточно вызвать 1 раз в onCreate приложения
     fun themeOverScrollGlowColor(res: android.content.res.Resources, colorID: Int) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            changeResColor(res, "overscroll_glow", colorID)
-            changeResColor(res, "overscroll_edge", colorID)
+            ThemeUtils.changeResColor(res, "overscroll_glow", colorID)
+            ThemeUtils.changeResColor(res, "overscroll_edge", colorID)
         }
     }
 
-    //Перекрашивание системного ресурса используемого в приложении в определённый цвет
-    @Suppress("DEPRECATION")
-    private fun changeResColor(res: android.content.res.Resources, resId: String, colorID: Int) {
-        try {
-            val drawableId = res.getIdentifier(resId, "drawable", "android")
-            val drawable = res.getDrawable(drawableId)
-            drawable.setColorFilter(res.getColor(colorID), PorterDuff.Mode.SRC_ATOP)
-        } catch (ignored: Exception) {
-        }
+    fun themeWindowBackground(window: Window){
+        window.setBackgroundDrawable(ColorDrawable(colorWindowBackground.intColor))
     }
 
     fun themeStatusBar(
@@ -935,17 +960,22 @@ abstract class ThemingBase {
 
 
     //call this after dialog.show() to apply theme to alertDialog
-    fun themeAlertDialog(alertDialog: AlertDialog){
+    //or inside/after onStart() of DialogFragment
+    fun themeAlertDialog(alertDialog: AlertDialog, view: View? = null){
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(colorAlertBackground.intColor))
 
-        val message = alertDialog.findViewById<TextView>(android.R.id.message)
+        val message: TextView? = if(view != null) view.findViewById(android.R.id.message)
+        else alertDialog.findViewById(android.R.id.message)
+
         message?.setTextColor(ColorStateList.valueOf(colorAlertMessage.intColor))
 
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(colorAlertButtons.intColor)
         alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(colorAlertButtons.intColor)
         alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setTextColor(colorAlertButtons.intColor)
 
-        val icon = alertDialog.findViewById<View>(android.R.id.icon)
+        val icon: View? = if(view != null) view.findViewById(android.R.id.icon)
+        else alertDialog.findViewById(android.R.id.icon)
+
         (icon as? ImageView)?.drawable?.apply {
             ThemeUtils.tintDrawable(this, colorAlertIcon.intColor)
         }

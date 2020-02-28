@@ -11,7 +11,8 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.ivan200.theming.*
+import com.ivan200.theming.R
+import com.ivan200.theming.Theming
 import com.ivan200.theming.fragments.BaseFragment
 
 
@@ -26,18 +27,14 @@ class MainFragment : BaseFragment(R.layout.fragment_main), Toolbar.OnMenuItemCli
     private val navigateButtons = Navigation.createNavigateOnClickListener(R.id.action_mainFragment_to_fragmentButtons, Bundle())
 
     val recyclerView get() = requireView().findViewById<RecyclerView>(R.id.rv_main)
-    val adapter by lazy {
-        MainAdapter(
-            getMainCellList()
-        )
-    }
+    val adapter by lazy { MainAdapter(getMainCellList()) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setHasOptionsMenu(true)
         toolbar?.setOnMenuItemClickListener(this)
-        Theming.themeViews(toolbar!!, view)
+        Theming.themeViews(toolbar!!, view, recyclerView)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
@@ -45,18 +42,12 @@ class MainFragment : BaseFragment(R.layout.fragment_main), Toolbar.OnMenuItemCli
 
     fun getMainCellList() : List<MainCellInfo>{
         return listOf(
-            MainCellInfo(
-                "ProgressBars",
-                navigateProgress
-            ),
-            MainCellInfo(
-                "Buttons",
-                navigateButtons
-            ),
-            MainCellInfo(
-                "Inputs",
-                navigateLogin
-            )
+            MainCellInfo("ProgressBars", navigateProgress),
+            MainCellInfo("Buttons", navigateButtons),
+            MainCellInfo("Inputs", navigateLogin),
+            MainCellInfo("AlertDialogFragment", View.OnClickListener {
+                mActivity.showSimpleDialog()
+            })
         )
     }
 

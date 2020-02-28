@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.ColorMatrixColorFilter
+import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.drawable.*
 import android.os.Build
@@ -54,6 +55,17 @@ object ThemeUtils {
     fun setDecorFlag(win: Window, bits: Int, state: Boolean) {
         val flags = win.decorView.systemUiVisibility
         win.decorView.systemUiVisibility = if (state) flags or bits else flags and bits.inv()
+    }
+
+    //Перекрашивание системного ресурса используемого в приложении в определённый цвет
+    @Suppress("DEPRECATION")
+    fun changeResColor(res: android.content.res.Resources, resId: String, colorID: Int) {
+        try {
+            val drawableId = res.getIdentifier(resId, "drawable", "android")
+            val drawable = res.getDrawable(drawableId)
+            drawable.setColorFilter(res.getColor(colorID), PorterDuff.Mode.SRC_ATOP)
+        } catch (ignored: Exception) {
+        }
     }
 
     fun tintDrawable(drawable: Drawable?, @ColorInt color: Int): Drawable? {

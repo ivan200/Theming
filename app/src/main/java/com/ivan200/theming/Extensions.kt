@@ -10,8 +10,12 @@ import java.util.*
 //
 fun printToLogThis(message: String = "") {
     val stackTrace = Thread.currentThread().stackTrace
-    if (stackTrace.size > 2) {
-        val stackTraceElement = stackTrace[3]
+    val index1 = stackTrace.indexOfFirst { it.methodName.contains("printToLogThis") }
+    val index2 = stackTrace.withIndex().indexOfFirst {
+        it.index > index1 && !it.value.methodName.contains("printToLogThis")
+    }
+    if (stackTrace.size > index2) {
+        val stackTraceElement = stackTrace[index2]
         val time = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()).format(System.currentTimeMillis())
         Log.w("Log", "$time $stackTraceElement $message")
     }

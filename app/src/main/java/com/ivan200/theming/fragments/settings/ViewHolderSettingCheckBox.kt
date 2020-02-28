@@ -58,12 +58,11 @@ class ViewHolderSettingCheckBox (
     }
 
     fun onBtnClearClick(v: View){
-        _setting.value = null
-        bind(_setting)
+        activity.clearFlagSetting(_setting)
     }
 
     override fun onClick(v: View?) {
-
-
+        activity.changeFlagSetting(_setting)
+//        activity.showSimpleDialog()
     }
 }

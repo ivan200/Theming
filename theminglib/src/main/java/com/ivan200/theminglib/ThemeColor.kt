@@ -14,7 +14,9 @@ enum class ThemeColor {
     colorError,
 
     //System components
-    /** Цвет статусбара **/
+    /** Цвет фона окна, на случай если статусбар прозрачный **/
+    colorWindowBackground,
+    /** Цвет статусбара начиная **/
     colorStatusBar,
     /** Цвет статусбара на апи 21-22, где текст на статусбаре всегда белый **/
     colorStatusBarDark,
