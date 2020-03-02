@@ -28,8 +28,19 @@ enum class ThemeColor {
     /** Цвет разделителя нижнего навбара, включается на апи 28+ **/
     colorNavBarDivider,
 
-    /** Цвет подсветки ресайклервью и листвью при скролле на апи<21 **/
-    colorOverScroll,
+    /** Цвет подсветки ресайклервью и листвью при скролле.
+     * От него наследуются цвета разных сторон подсветки,
+     * и также используется на апи<21 для всех строн recyclerview **/
+    colorEdgeGlow,
+
+    /** Цвет подсветки верхней границы ScrollView, ListView и RecyclerView **/
+    colorEdgeGlowTop,
+    /** Цвет подсветки нижней границы ScrollView, ListView и RecyclerView **/
+    colorEdgeGlowBottom,
+    /** Цвет подсветки левой границы HorizontalScrollView, ViewPager и RecyclerView **/
+    colorEdgeGlowLeft,
+    /** Цвет подсветки правой границы HorizontalScrollView, ViewPager и RecyclerView **/
+    colorEdgeGlowRight,
 
     //Text
     /** Цвет текста **/

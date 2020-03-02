@@ -1,6 +1,7 @@
 package com.ivan200.theming
 
 import android.os.Bundle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.ivan200.theming.fragments.DialogFragmentBuilder
 import com.ivan200.theming.fragments.settings.CheckSetting
@@ -51,8 +52,18 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ColorPickerDialo
         anySettingChangeListener?.invoke()
     }
 
+    fun showSimpleAlertDialog(){
+        val alertDialog = AlertDialog.Builder(this)
+            .setTitle("Alert")
+            .setMessage("AlertDialog")
+            .setPositiveButton("Ok") { dialog, id -> }
+            .setNegativeButton("Cancel") { dialog, id -> }
+            .setNeutralButton("Unknown") { dialog, id -> }
+            .show()
+        Theming.themeAlertDialog(alertDialog)
+    }
 
-    fun showSimpleDialog(){
+    fun showSimpleDialogFragment(){
         DialogFragmentBuilder()
             .withMessage("DialogFragment")
             .withPositiveButton("Ok")

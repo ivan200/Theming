@@ -22,19 +22,10 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.ViewCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
-import java.util.*
 
 //
 // Created by Ivan200 on 25.02.2020.
 //
-
-inline fun <T,K,V> Iterable<T>.toHashMap(getKey: Function1<T, K>, getValue: Function1<T, V>): HashMap<K, V> {
-    val map = HashMap<K,V>()
-    for (item in this) {
-        map[getKey(item)] = getValue(item)
-    }
-    return map
-}
 
 object ThemeUtils {
     fun spToPx(number:Number, context: Context? = null): Float {
@@ -59,11 +50,11 @@ object ThemeUtils {
 
     //Перекрашивание системного ресурса используемого в приложении в определённый цвет
     @Suppress("DEPRECATION")
-    fun changeResColor(res: android.content.res.Resources, resId: String, colorID: Int) {
+    fun changeResColor(res: android.content.res.Resources, resId: String, @ColorInt color: Int) {
         try {
             val drawableId = res.getIdentifier(resId, "drawable", "android")
             val drawable = res.getDrawable(drawableId)
-            drawable.setColorFilter(res.getColor(colorID), PorterDuff.Mode.SRC_ATOP)
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
         } catch (ignored: Exception) {
         }
     }
@@ -257,13 +248,7 @@ object ThemeUtils {
             }
     }
 
-    fun <T> modifyPrivateFieldThroughEditor(
-        obj: Any,
-        objClass: Class<*>,
-        editorName: String,
-        fieldName: String,
-        modify: (T?) -> T?
-    ) {
+    fun <T> modifyPrivateFieldThroughEditor(obj: Any, objClass: Class<*>, editorName: String, fieldName: String, modify: (T?) -> T?) {
         try {
             objClass
                 .getDeclaredField(editorName)

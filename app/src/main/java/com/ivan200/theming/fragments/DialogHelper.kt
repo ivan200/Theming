@@ -111,8 +111,7 @@ data class DialogFragmentBuilder (
             val builder = AlertDialog.Builder(requireContext())
 
             b1?.apply {
-                val t = title ?: requireContext().getString(android.R.string.dialog_alert_title)
-                builder.setTitle(t)
+                builder.setTitle(title ?: requireContext().getString(android.R.string.dialog_alert_title))
 
                 if (errorIcon == true || (errorIcon == null && throwable != null)) {
                     getErrorIconId().let { builder.setIcon(it) }

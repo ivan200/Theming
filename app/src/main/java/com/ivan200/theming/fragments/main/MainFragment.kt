@@ -45,8 +45,11 @@ class MainFragment : BaseFragment(R.layout.fragment_main), Toolbar.OnMenuItemCli
             MainCellInfo("ProgressBars", navigateProgress),
             MainCellInfo("Buttons", navigateButtons),
             MainCellInfo("Inputs", navigateLogin),
-            MainCellInfo("AlertDialogFragment", View.OnClickListener {
-                mActivity.showSimpleDialog()
+            MainCellInfo("AlertDialog", View.OnClickListener {
+                mActivity.showSimpleAlertDialog()
+            }),
+            MainCellInfo("DialogFragment", View.OnClickListener {
+                mActivity.showSimpleDialogFragment()
             })
         )
     }

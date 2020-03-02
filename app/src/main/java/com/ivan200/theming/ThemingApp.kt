@@ -13,7 +13,8 @@ class ThemingApp : Application() {
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-
         Prefs.init(this)
     }
+
+
 }

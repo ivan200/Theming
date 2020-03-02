@@ -22,6 +22,7 @@ class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
     val adapter by lazy { AdapterSettings(mActivity, getPrefsList()) }
 
     var hasColorChanges = false
+    var layoutManager: LinearLayoutManager? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,7 +31,8 @@ class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
         mActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Theming.themeViewAndSubviews(view)
 
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
 
         fab.showIf { hasColorChanges }
@@ -40,7 +42,26 @@ class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
         }
 
         mActivity.anySettingChangeListener = this::onAnyPrefChanged
+
+        savedInstanceState?.apply {
+            val positionIndex = this.getInt("positionIndex", -1)
+            val offset = this.getInt("offset", 0)
+            if (positionIndex != -1) {
+                layoutManager?.scrollToPositionWithOffset(positionIndex, offset)
+            }
+        }
     }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        if(view != null && layoutManager != null) {
+            outState.putInt("positionIndex", layoutManager!!.findFirstVisibleItemPosition())
+            outState.putInt("offset", recyclerView.getChildAt(0)?.let { it.top - recyclerView.paddingTop } ?: 0)
+        }
+    }
+
 
     fun onAnyPrefChanged(){
         hasColorChanges = true
@@ -75,13 +96,23 @@ class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
             CheckSetting(mActivity, ThemeFlag.navBarLightTheme, ""),
             ColorSetting(mActivity, ThemeColor.colorNavBarDivider, ""),
 
-            ColorSetting(mActivity, ThemeColor.colorOverScroll, ""),
+            ColorSetting(mActivity, ThemeColor.colorEdgeGlow, ""),
+            ColorSetting(mActivity, ThemeColor.colorEdgeGlowTop, ""),
+            ColorSetting(mActivity, ThemeColor.colorEdgeGlowBottom, ""),
+            ColorSetting(mActivity, ThemeColor.colorEdgeGlowLeft, ""),
+            ColorSetting(mActivity, ThemeColor.colorEdgeGlowRight, ""),
 
             HeaderSetting(mActivity, "Текст"),
             ColorSetting(mActivity, ThemeColor.colorText, ""),
             ColorSetting(mActivity, ThemeColor.colorTextHint, "", true),
 
             ColorSetting(mActivity, ThemeColor.colorDivider, "", true),
+
+            HeaderSetting(mActivity, "Экшенбар"),
+            ColorSetting(mActivity, ThemeColor.colorActionBar, ""),
+            ColorSetting(mActivity, ThemeColor.colorActionBarText, ""),
+            ColorSetting(mActivity, ThemeColor.colorActionBarTextSecondary, ""),
+            ColorSetting(mActivity, ThemeColor.colorActionBarIcons, ""),
 
             HeaderSetting(mActivity, "Поля ввода"),
             ColorSetting(mActivity, ThemeColor.colorInputPasswordEye, ""),
@@ -131,12 +162,6 @@ class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
 
             HeaderSetting(mActivity, "Иконки"),
             ColorSetting(mActivity, ThemeColor.colorIcon, ""),
-
-            HeaderSetting(mActivity, "Тулбар"),
-            ColorSetting(mActivity, ThemeColor.colorActionBar, ""),
-            ColorSetting(mActivity, ThemeColor.colorActionBarText, ""),
-            ColorSetting(mActivity, ThemeColor.colorActionBarTextSecondary, ""),
-            ColorSetting(mActivity, ThemeColor.colorActionBarIcons, ""),
 
             HeaderSetting(mActivity, "Нижняя панель"),
             ColorSetting(mActivity, ThemeColor.colorBottomNavBackground, ""),

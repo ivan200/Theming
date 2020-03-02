@@ -59,7 +59,11 @@ abstract class ThemingBase {
             put(colorNavBar) { Color.BLACK }
             put(colorNavBarDark) { Color.BLACK }
             put(colorNavBarDivider) { Color.TRANSPARENT }
-            put(colorOverScroll) { colorPrimary.intColor }
+            put(colorEdgeGlow) { colorPrimary.intColor }
+            put(colorEdgeGlowTop) { colorEdgeGlow.intColor }
+            put(colorEdgeGlowBottom) { colorEdgeGlow.intColor }
+            put(colorEdgeGlowLeft) { colorEdgeGlow.intColor }
+            put(colorEdgeGlowRight) {colorEdgeGlow.intColor }
             put(colorText) { getTextColor(colorBackground.intColor) }
             put(colorTextHint) { getHintColor(colorText.intColor) }
             put(colorDivider) { getDividerColor(colorText.intColor) }
@@ -137,55 +141,22 @@ abstract class ThemingBase {
         themeWindowBackground(activity.window)
         themeStatusBar(activity.window)
         themeNavigationBar(activity.window)
-        themeOverScrollGlowColor(activity.resources, colorOverScroll.intColor)
+        ThemeEdgeEffect.themeOverScrollGlowColor(activity.resources, colorEdgeGlow.intColor)
     }
 
     fun themeView(v: View): Boolean {
-        //skip this classes and it's subviews
-        if(v::class.java.simpleName == "ViewPager2"){
-            return true
-        }
-
         when (v) {
-            is ScrollView -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    v.setEdgeEffectColor(colorOverScroll.intColor)
-                } else {
-                    XpEdgeEffect.setColor(v, colorOverScroll.intColor)
-                }
-            }
-            is ViewPager -> XpEdgeEffect.setColor(v, colorOverScroll.intColor)
-            is HorizontalScrollView -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    v.setEdgeEffectColor(colorOverScroll.intColor)
-                } else {
-                    XpEdgeEffect.setColor(v, colorOverScroll.intColor)
-                }
-            }
-            is NestedScrollView -> XpEdgeEffect.setColor(v, colorOverScroll.intColor)
-            is RecyclerView -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    v.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
-                        override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
-                            return EdgeEffect(view.context).apply { color = colorOverScroll.intColor }
-                        }
-                    }
-                } else {
-                    XpEdgeEffect.setColor(v, colorOverScroll.intColor)
-                }
-            }
-            is AbsListView -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    v.setEdgeEffectColor(colorOverScroll.intColor)
-                } else {
-                    XpEdgeEffect.setColor(v, colorOverScroll.intColor)
-                }
-            }
-
-            is TextInputLayout -> {
-                themeTextInputLayout(v)
-                return false
-            }
+            is ViewPager,
+            is HorizontalScrollView,
+            is NestedScrollView,
+            is RecyclerView,
+            is AbsListView,
+            is ScrollView -> ThemeEdgeEffect.setColor(v,
+                Rect(colorEdgeGlowLeft.intColor,
+                    colorEdgeGlowTop.intColor,
+                    colorEdgeGlowRight.intColor,
+                    colorEdgeGlowBottom.intColor))
+            is TextInputLayout -> themeTextInputLayout(v)
             is AppCompatEditText -> themeEditText(v)
             is SeekBar -> themeSeekBar(v)
             is ProgressBar -> themeProgressBar(v)
@@ -204,12 +175,23 @@ abstract class ThemingBase {
         return true
     }
 
+    private fun needThemeSubViews(view: View, viewThemed: Boolean): Boolean {
+        if(view::class.java.simpleName == "ViewPager2"){
+            return false
+        }
+        return if(viewThemed){
+            view is ScrollView || view is TextInputLayout
+        } else {
+            view is ViewGroup
+        }
+    }
+
     //применяет цвета для списка вьюшек
     fun themeViews(vararg view: View?) {
         view.forEach {
             if(it != null) {
                 val viewThemed = themeView(it)
-                if (!viewThemed && it is ViewGroup) {
+                if(needThemeSubViews(it, viewThemed)){
                     themeViewBack(it)
                 }
             }
@@ -218,11 +200,10 @@ abstract class ThemingBase {
 
     //применяет цвета для вьюшки и всех её сабвьюшек
     fun themeViewAndSubviews(view: View) {
+        themeView(view)
         if(view is ViewGroup){
             themeViewBack(view)
             themeChild(view)
-        } else{
-            themeView(view)
         }
     }
 
@@ -230,17 +211,11 @@ abstract class ThemingBase {
         for (i in 0 until view.childCount) {
             val v = view.getChildAt(i)
             val viewThemed = themeView(v)
-            if(!viewThemed && v is ViewGroup){
-                themeChild(v)
+            if(needThemeSubViews(v, viewThemed)){
+                if(v is ViewGroup) {
+                    themeChild(v)
+                }
             }
-        }
-    }
-
-    //Перекрашивание цвета оверскролла на всех RecyclerView на api<21. Достаточно вызвать 1 раз в onCreate приложения
-    fun themeOverScrollGlowColor(res: android.content.res.Resources, colorID: Int) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            ThemeUtils.changeResColor(res, "overscroll_glow", colorID)
-            ThemeUtils.changeResColor(res, "overscroll_edge", colorID)
         }
     }
 
