@@ -36,9 +36,6 @@ class ViewHolderSettingColor (
         btnClear.setOnClickListener(this::onBtnClearClick)
     }
 
-    // Обычно применение цветов достаточно в блоке init,
-    // но так как это список цветов, и на этом экране можно их менять,
-    // приходится применять цвета на каждый bind
     fun colorize(){
         Theming.themeCellBg(itemView)
         Theming.themeViews(title)
@@ -48,8 +45,8 @@ class ViewHolderSettingColor (
 
     override fun bind(setting: Setting) {
         if (setting !is ColorSetting) return
-        colorize()
         _setting = setting
+        colorize()
         title.text = setting.title
         subTitle.showIf { setting.subTitle.isNotEmpty() }
         subTitle.text = setting.subTitle

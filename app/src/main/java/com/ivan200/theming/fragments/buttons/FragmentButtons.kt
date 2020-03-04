@@ -14,8 +14,7 @@ class FragmentButtons : BaseFragment(R.layout.fragment_buttons) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setHasOptionsMenu(true)
-        mActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setbackButton()
         Theming.themeViewAndSubviews(view)
     }
 }

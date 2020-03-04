@@ -16,7 +16,7 @@ enum class ThemeColor {
     //System components
     /** Цвет фона окна, на случай если статусбар прозрачный **/
     colorWindowBackground,
-    /** Цвет статусбара начиная **/
+    /** Цвет статусбара **/
     colorStatusBar,
     /** Цвет статусбара на апи 21-22, где текст на статусбаре всегда белый **/
     colorStatusBarDark,
@@ -28,9 +28,9 @@ enum class ThemeColor {
     /** Цвет разделителя нижнего навбара, включается на апи 28+ **/
     colorNavBarDivider,
 
-    /** Цвет подсветки ресайклервью и листвью при скролле.
+    /** Цвет подсветки RecyclerView и ListView при скролле.
      * От него наследуются цвета разных сторон подсветки,
-     * и также используется на апи<21 для всех строн recyclerview **/
+     * и также используется на апи<21 для всех строн RecyclerView **/
     colorEdgeGlow,
 
     /** Цвет подсветки верхней границы ScrollView, ListView и RecyclerView **/
@@ -127,6 +127,12 @@ enum class ThemeColor {
     colorAlertMessage,
     /** Цвет кнопок  диалога **/
     colorAlertButtons,
+    /** Цвет позитивной кнопки далога **/
+    colorAlertButtonPositive,
+    /** Цвет негативной кнопки далога **/
+    colorAlertButtonNegative,
+    /** Цвет нейтральной кнопки далога **/
+    colorAlertButtonNeutral,
 
     //ImageView
     /** Цвет иконок **/
@@ -143,15 +149,15 @@ enum class ThemeColor {
     colorActionBarIcons,
 
     //BottomNavigationView
-    /** Цвет фона нижнего таббара **/
+    /** Цвет фона нижней панели **/
     colorBottomNavBackground,
-    /** Цвет иконок нижнего таббара **/
+    /** Цвет иконок нижней панели **/
     colorBottomNavIcon,
-    /** Цвет иконки выбранной вкладки нижнего таббара **/
+    /** Цвет иконки выбранной вкладки нижней панели **/
     colorBottomNavIconSelected,
-    /** Цвет текста нижнего таббара **/
+    /** Цвет текста нижней панели **/
     colorBottomNavText,
-    /** Цвет текста выбранной вкладки нижнего таббара **/
+    /** Цвет текста выбранной вкладки нижней панели **/
     colorBottomNavTextSelected,
 
 }

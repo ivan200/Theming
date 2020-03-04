@@ -14,8 +14,7 @@ class FragmentProgress : BaseFragment(R.layout.fragment_progress) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setHasOptionsMenu(true)
-        mActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setbackButton()
         Theming.themeViewAndSubviews(view)
     }
 }

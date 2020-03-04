@@ -42,6 +42,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main), Toolbar.OnMenuItemCli
 
     fun getMainCellList() : List<MainCellInfo>{
         return listOf(
+            MainCellInfo("Settings", navigatePrefs),
             MainCellInfo("ProgressBars", navigateProgress),
             MainCellInfo("Buttons", navigateButtons),
             MainCellInfo("Inputs", navigateLogin),

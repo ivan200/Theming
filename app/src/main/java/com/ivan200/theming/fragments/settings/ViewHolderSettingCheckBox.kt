@@ -10,6 +10,7 @@ import com.ivan200.theming.R
 import com.ivan200.theming.Theming
 import com.ivan200.theming.showIf
 
+
 //
 // Created by Ivan200 on 25.02.2020.
 //
@@ -24,8 +25,9 @@ class ViewHolderSettingCheckBox (
 
     val title : TextView get() = itemView.findViewById(R.id.tv_title)
     val subTitle : TextView get() = itemView.findViewById(R.id.tv_subtitle)
-    val cbSetting: CheckBox get() = itemView.findViewById(R.id.cb_setting)
+
     val btnClear: ImageButton get() = itemView.findViewById(R.id.btn_clear)
+    val cbSetting: CheckBox get() = itemView.findViewById(R.id.cb_setting)
 
     private lateinit var _setting: CheckSetting
 
@@ -34,27 +36,25 @@ class ViewHolderSettingCheckBox (
         btnClear.setOnClickListener(this::onBtnClearClick)
     }
 
-    // Обычно применение цветов достаточно в блоке init,
-    // но так как это список цветов, и на этом экране можно их менять,
-    // приходится применять цвета на каждый bind
     fun colorize(){
         Theming.themeCellBg(itemView)
-        Theming.themeViews(title, cbSetting)
         Theming.themeIcon(btnClear)
         Theming.themeTextViewSecondary(subTitle)
+        Theming.themeViews(title, cbSetting)
     }
 
     override fun bind(setting: Setting) {
         if (setting !is CheckSetting) return
-        colorize()
         _setting = setting
-        title.text = setting.title
+        colorize()
 
+        title.text = setting.title
         subTitle.showIf { setting.subTitle.isNotEmpty() }
         subTitle.text = setting.subTitle
         btnClear.showIf { !setting.useDefault }
-        cbSetting.isChecked = setting.anyValue
-        cbSetting.isEnabled = setting.useDefault
+
+        cbSetting.isChecked = _setting.anyValue
+        cbSetting.isEnabled = _setting.useDefault
     }
 
     fun onBtnClearClick(v: View){
@@ -63,6 +63,5 @@ class ViewHolderSettingCheckBox (
 
     override fun onClick(v: View?) {
         activity.changeFlagSetting(_setting)
-//        activity.showSimpleDialog()
     }
 }

@@ -18,9 +18,6 @@ class ViewHolderSettingHeader (view: View) : RecyclerView.ViewHolder(view), Adap
     val title : TextView get() = itemView.findViewById(R.id.tv_title)
     val divider : View get() = itemView.findViewById(R.id.v_divider)
 
-    // Обычно применение цветов достаточно в блоке init,
-    // но так как это список цветов, и на этом экране можно их менять,
-    // приходится применять цвета на каждый bind
     fun colorize(){
         Theming.themeViewBack(itemView)
         Theming.themeTextViewSecondary(title)

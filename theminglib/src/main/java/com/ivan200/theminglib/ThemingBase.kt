@@ -97,6 +97,9 @@ abstract class ThemingBase {
             put(colorAlertIcon) { colorText.intColor }
             put(colorAlertMessage) { colorText.intColor }
             put(colorAlertButtons) { colorPrimary.intColor }
+            put(colorAlertButtonPositive) { colorAlertButtons.intColor }
+            put(colorAlertButtonNegative) { colorAlertButtons.intColor }
+            put(colorAlertButtonNeutral) { colorAlertButtons.intColor }
             put(colorIcon) { colorText.intColor }
             put(colorActionBar) { colorPrimary.intColor }
             put(colorActionBarText) { getTextColor(colorActionBar.intColor) }
@@ -944,9 +947,9 @@ abstract class ThemingBase {
 
         message?.setTextColor(ColorStateList.valueOf(colorAlertMessage.intColor))
 
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(colorAlertButtons.intColor)
-        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(colorAlertButtons.intColor)
-        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setTextColor(colorAlertButtons.intColor)
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(colorAlertButtonPositive.intColor)
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(colorAlertButtonNegative.intColor)
+        alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)?.setTextColor(colorAlertButtonNeutral.intColor)
 
         val icon: View? = if(view != null) view.findViewById(android.R.id.icon)
         else alertDialog.findViewById(android.R.id.icon)

@@ -1,4 +1,4 @@
-package com.ivan200.theming.fragments
+package com.ivan200.theming.utils
 
 import android.app.Activity
 import android.app.Dialog
@@ -25,7 +25,7 @@ import kotlinx.android.parcel.Parcelize
 //
 
 @Parcelize
-data class DialogFragmentBuilder (
+data class AlertDialogFragmentBuilder (
     var title: String? = null,
     var message: String? = null,
     var positiveButton: String? = null,
@@ -68,7 +68,7 @@ data class DialogFragmentBuilder (
     fun withThrowable(throwable: Throwable)                 = apply { this.throwable        = throwable                           }
 
     companion object {
-        val parcelTag = DialogFragmentBuilder::class.java.simpleName
+        val parcelTag = AlertDialogFragmentBuilder::class.java.simpleName
     }
 
 
@@ -87,13 +87,13 @@ data class DialogFragmentBuilder (
         negativeButtonId?.let { negativeButton = context.getString(it) }
         neutralButtonId?.let { neutralButton = context.getString(it) }
 
-        val dialog = DialogFragmentHelper()
-        dialog.arguments = Bundle().also { it.putParcelable(parcelTag, this@DialogFragmentBuilder) }
+        val dialog = AlertDialogFragment()
+        dialog.arguments = Bundle().also { it.putParcelable(parcelTag, this@AlertDialogFragmentBuilder) }
         targetFragment!!.apply { dialog.setTargetFragment(this, requestCode) }
-        dialog.show(fragmentManager, DialogFragmentHelper::class.java.simpleName)
+        dialog.show(fragmentManager, AlertDialogFragment::class.java.simpleName)
     }
 
-    class DialogFragmentHelper : DialogFragment() {
+    class AlertDialogFragment : DialogFragment() {
         companion object {
             val EXTRA_SINGLE_CHOISE = "EXTRA_SINGLE_CHOISE"
             val EXTRA_MULTI_CHOISE = "EXTRA_MULTI_CHOISE"
@@ -106,7 +106,9 @@ data class DialogFragmentBuilder (
 
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val args: Bundle = requireArguments()
-            val b1 = args.getParcelable<DialogFragmentBuilder>(DialogFragmentBuilder.parcelTag)
+            val b1 = args.getParcelable<AlertDialogFragmentBuilder>(
+                parcelTag
+            )
 
             val builder = AlertDialog.Builder(requireContext())
 
@@ -167,27 +169,19 @@ data class DialogFragmentBuilder (
                 if (cancellable == false) {
                     builder.setCancelable(false)
                 } else {
+                    builder.setCancelable(true)
                     builder.setOnCancelListener { dialog: DialogInterface ->
                         targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, null)
                     }
-                    builder.setCancelable(true)
-                }
-            }
-            val dialog = builder.create()
-            if (b1?.cancellable == false) {
-                dialog.setCancelable(false)
-            } else {
-                dialog.setOnCancelListener { s: DialogInterface ->
-                    targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, null)
-                }
-                dialog.setOnKeyListener { arg0, keyCode, event ->
-                    if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, null)
+                    builder.setOnKeyListener { arg0, keyCode, event ->
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                            targetFragment!!.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, null)
+                        }
+                        true
                     }
-                    true
                 }
             }
-            return dialog
+            return builder.create()
         }
 
         open fun getExceptionText(exMessage: String?, ex: Throwable?): String {

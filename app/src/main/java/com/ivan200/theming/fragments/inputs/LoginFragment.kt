@@ -13,9 +13,7 @@ import com.ivan200.theming.fragments.BaseFragment
 class LoginFragment : BaseFragment(R.layout.fragment_login){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setHasOptionsMenu(true)
-        mActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setbackButton()
         Theming.themeViewAndSubviews(view)
     }
 }
