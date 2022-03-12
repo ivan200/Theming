@@ -422,7 +422,6 @@ abstract class ThemingBase {
     }
 
     fun themeEditText(editText: AppCompatEditText) {
-
         ViewCompat.setBackgroundTintList(editText, ColorStateList.valueOf(ColorInputBottomLine.intColor))    //нижняя полоска
         setCursorDrawableColor(editText, ColorInputCursor.intColor)          //моргающий курсор
         setHandlesColor(editText, ColorInputHandles.intColor)                //Захваты выделения

@@ -62,6 +62,18 @@
                     android:nextFocusForward="@+id/login_btn_authorize" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/login_edit_notextinput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_default"
+                android:hint="@string/hint_password"
+                android:imeActionLabel="@string/hint_ime_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:nextFocusForward="@+id/login_btn_authorize" />
+
             <SearchView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
