@@ -16,8 +16,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.ivan200.theming.Theming
-import kotlinx.android.parcel.IgnoredOnParcel
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 
 
 //
@@ -25,7 +25,7 @@ import kotlinx.android.parcel.Parcelize
 //
 
 @Parcelize
-data class AlertDialogFragmentBuilder (
+data class AlertDialogFragmentBuilder(
     var title: String? = null,
     var message: String? = null,
     var positiveButton: String? = null,
@@ -40,32 +40,36 @@ data class AlertDialogFragmentBuilder (
 ) : Parcelable {
     @IgnoredOnParcel
     private var titleId: Int? = null
+
     @IgnoredOnParcel
     private var messageId: Int? = null
+
     @IgnoredOnParcel
     private var positiveButtonId: Int? = null
+
     @IgnoredOnParcel
     private var negativeButtonId: Int? = null
+
     @IgnoredOnParcel
     private var neutralButtonId: Int? = null
 
-    fun withTitle(title: CharSequence)                      = apply { this.title            = title.toString()                    }
-    fun withMessage(message: CharSequence)                  = apply { this.message          = message.toString()                  }
-    fun withPositiveButton(positiveButton: CharSequence)    = apply { this.positiveButton   = positiveButton.toString()           }
-    fun withNegativeButton(negativeButton: CharSequence)    = apply { this.negativeButton   = negativeButton.toString()           }
-    fun withNeutralButton(neutralButton: CharSequence)      = apply { this.neutralButton    = neutralButton.toString()            }
-    fun withTitle(titleId: Int)                             = apply { this.titleId          = titleId                             }
-    fun withMessage(messageId: Int)                         = apply { this.messageId        = messageId                           }
-    fun withPositiveButton(positiveButtonId: Int)           = apply { this.positiveButtonId = positiveButtonId                    }
-    fun withNegativeButton(negativeButtonId: Int)           = apply { this.negativeButtonId = negativeButtonId                    }
-    fun withNeutralButton(neutralButtonId: Int)             = apply { this.neutralButtonId  = neutralButtonId                     }
-    fun withCancellable(cancellable: Boolean)               = apply { this.cancellable      = cancellable                         }
-    fun withErrorIcon()                                     = apply { this.errorIcon        = true                                }
-    fun withoutErrorIcon()                                  = apply { this.errorIcon        = false                               }
-    fun withItems(items: List<String>)                      = apply { this.items            = items                               }
-    fun withItemsChecked(checkedItems : List<Boolean>)      = apply { this.checkedItems     = checkedItems.toMutableList()        }
-    fun withItemChecked(checkedItem: Int)                   = apply { this.checkedItem      = checkedItem                         }
-    fun withThrowable(throwable: Throwable)                 = apply { this.throwable        = throwable                           }
+    fun withTitle(title: CharSequence) = apply { this.title = title.toString() }
+    fun withMessage(message: CharSequence) = apply { this.message = message.toString() }
+    fun withPositiveButton(positiveButton: CharSequence) = apply { this.positiveButton = positiveButton.toString() }
+    fun withNegativeButton(negativeButton: CharSequence) = apply { this.negativeButton = negativeButton.toString() }
+    fun withNeutralButton(neutralButton: CharSequence) = apply { this.neutralButton = neutralButton.toString() }
+    fun withTitle(titleId: Int) = apply { this.titleId = titleId }
+    fun withMessage(messageId: Int) = apply { this.messageId = messageId }
+    fun withPositiveButton(positiveButtonId: Int) = apply { this.positiveButtonId = positiveButtonId }
+    fun withNegativeButton(negativeButtonId: Int) = apply { this.negativeButtonId = negativeButtonId }
+    fun withNeutralButton(neutralButtonId: Int) = apply { this.neutralButtonId = neutralButtonId }
+    fun withCancellable(cancellable: Boolean) = apply { this.cancellable = cancellable }
+    fun withErrorIcon() = apply { this.errorIcon = true }
+    fun withoutErrorIcon() = apply { this.errorIcon = false }
+    fun withItems(items: List<String>) = apply { this.items = items }
+    fun withItemsChecked(checkedItems: List<Boolean>) = apply { this.checkedItems = checkedItems.toMutableList() }
+    fun withItemChecked(checkedItem: Int) = apply { this.checkedItem = checkedItem }
+    fun withThrowable(throwable: Throwable) = apply { this.throwable = throwable }
 
     companion object {
         val parcelTag = AlertDialogFragmentBuilder::class.java.simpleName
@@ -129,7 +133,8 @@ data class AlertDialogFragmentBuilder (
                         builder.setMultiChoiceItems(items!!.toTypedArray(), checkedItems!!.toBooleanArray(), clickListener)
                     } else {
                         builder.setSingleChoiceItems(items!!.toTypedArray(), checkedItem) { dialog, which ->
-                            targetFragment!!.onActivityResult(targetRequestCode, DialogInterface.BUTTON_POSITIVE,
+                            targetFragment!!.onActivityResult(
+                                targetRequestCode, DialogInterface.BUTTON_POSITIVE,
                                 Intent().putExtra(EXTRA_SINGLE_CHOISE, which)
                             )
                         }
@@ -144,8 +149,9 @@ data class AlertDialogFragmentBuilder (
                     positiveButton
                 if (!positiveButtonText.isNullOrEmpty()) {
                     builder.setPositiveButton(positiveButtonText) { dialog, id ->
-                        targetFragment!!.onActivityResult(targetRequestCode, DialogInterface.BUTTON_POSITIVE,
-                            if(checkedItems == null){
+                        targetFragment!!.onActivityResult(
+                            targetRequestCode, DialogInterface.BUTTON_POSITIVE,
+                            if (checkedItems == null) {
                                 null
                             } else {
                                 Intent().putExtra(EXTRA_MULTI_CHOISE, checkedItems!!.toBooleanArray())

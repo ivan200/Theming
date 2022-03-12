@@ -1,6 +1,5 @@
 package com.ivan200.theminglib
 
-import android.annotation.TargetApi
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -21,43 +20,19 @@ import java.lang.reflect.Field
 //
 
 object ThemeEdgeEffect {
-    private val FIELD_SCROLL_TOP by lazy {
-        getPrivateFieldOrNull(ScrollView::class.java, "mEdgeGlowTop")
-    }
-    private val FIELD_SCROLL_BOTTOM by lazy {
-        getPrivateFieldOrNull(ScrollView::class.java, "mEdgeGlowBottom")
-    }
-
-    private val FIELD_PAGER_LEFT by lazy {
-        getPrivateFieldOrNull(ViewPager::class.java, "mLeftEdge")
-    }
-    private val FIELD_PAGER_RIGHT by lazy {
-        getPrivateFieldOrNull(ViewPager::class.java, "mRightEdge")
-    }
-
-    private val FIELD_HORIZONTAL_LEFT by lazy {
-        getPrivateFieldOrNull(HorizontalScrollView::class.java, "mEdgeGlowLeft")
-    }
-    private val FIELD_HORIZONTAL_RIGHT by lazy {
-        getPrivateFieldOrNull(HorizontalScrollView::class.java, "mEdgeGlowRight")
-    }
-
-    private val FIELD_NESTED_TOP by lazy {
-        getPrivateFieldOrNull(NestedScrollView::class.java, "mEdgeGlowTop")
-    }
-    private val FIELD_NESTED_BOTTOM by lazy {
-        getPrivateFieldOrNull(NestedScrollView::class.java, "mEdgeGlowBottom")
-    }
-
-    private val FIELD_LIST_TOP by lazy {
-        getPrivateFieldOrNull(AbsListView::class.java, "mEdgeGlowTop")
-    }
-    private val FIELD_LIST_BOTTOM by lazy {
-        getPrivateFieldOrNull(AbsListView::class.java, "mEdgeGlowBottom")
-    }
+    private val FIELD_SCROLL_TOP by lazy { getPrivateFieldOrNull(ScrollView::class.java, "mEdgeGlowTop") }
+    private val FIELD_SCROLL_BOTTOM by lazy { getPrivateFieldOrNull(ScrollView::class.java, "mEdgeGlowBottom") }
+    private val FIELD_PAGER_LEFT by lazy { getPrivateFieldOrNull(ViewPager::class.java, "mLeftEdge") }
+    private val FIELD_PAGER_RIGHT by lazy { getPrivateFieldOrNull(ViewPager::class.java, "mRightEdge") }
+    private val FIELD_HORIZONTAL_LEFT by lazy { getPrivateFieldOrNull(HorizontalScrollView::class.java, "mEdgeGlowLeft") }
+    private val FIELD_HORIZONTAL_RIGHT by lazy { getPrivateFieldOrNull(HorizontalScrollView::class.java, "mEdgeGlowRight") }
+    private val FIELD_NESTED_TOP by lazy { getPrivateFieldOrNull(NestedScrollView::class.java, "mEdgeGlowTop") }
+    private val FIELD_NESTED_BOTTOM by lazy { getPrivateFieldOrNull(NestedScrollView::class.java, "mEdgeGlowBottom") }
+    private val FIELD_LIST_TOP by lazy { getPrivateFieldOrNull(AbsListView::class.java, "mEdgeGlowTop") }
+    private val FIELD_LIST_BOTTOM by lazy { getPrivateFieldOrNull(AbsListView::class.java, "mEdgeGlowBottom") }
 
     private val EDGE_EFFECT_CLASS by lazy {
-       when {
+        when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> null
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH -> EdgeEffect::class.java
             else -> {
@@ -71,24 +46,18 @@ object ThemeEdgeEffect {
         }
     }
 
-    private val EDGE_GLOW_FIELD_EDGE by lazy {
-        getPrivateFieldOrNull(EDGE_EFFECT_CLASS, "mEdge")
-    }
-    private val EDGE_GLOW_FIELD_GLOW by lazy {
-        getPrivateFieldOrNull(EDGE_EFFECT_CLASS, "mGlow")
-    }
-    private val EDGE_EFFECT_COMPAT_FIELD_EDGE_EFFECT  by lazy {
-        getPrivateFieldOrNull(EdgeEffectCompat::class.java, "mEdgeEffect")
-    }
+    private val EDGE_GLOW_FIELD_EDGE by lazy { getPrivateFieldOrNull(EDGE_EFFECT_CLASS, "mEdge") }
+    private val EDGE_GLOW_FIELD_GLOW by lazy { getPrivateFieldOrNull(EDGE_EFFECT_CLASS, "mGlow") }
+    private val EDGE_EFFECT_COMPAT_FIELD_EDGE_EFFECT by lazy { getPrivateFieldOrNull(EdgeEffectCompat::class.java, "mEdgeEffect") }
 
     fun setColor(view: Any, @ColorInt color: Int) {
-        setColor(view, Rect(color,color,color,color))
+        setColor(view, Rect(color, color, color, color))
     }
 
     fun setColor(view: Any, colors: Rect) {
         try {
-            when(view) {
-                is AbsListView ->{
+            when (view) {
+                is AbsListView -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         view.topEdgeEffectColor = colors.top
                         view.bottomEdgeEffectColor = colors.bottom
@@ -97,7 +66,7 @@ object ThemeEdgeEffect {
                         FIELD_LIST_BOTTOM?.get(view)?.apply { setFieldColor(this, colors.bottom) }
                     }
                 }
-                is ScrollView ->{
+                is ScrollView -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         view.topEdgeEffectColor = colors.top
                         view.bottomEdgeEffectColor = colors.bottom
@@ -106,7 +75,7 @@ object ThemeEdgeEffect {
                         FIELD_SCROLL_BOTTOM?.get(view)?.apply { setFieldColor(this, colors.bottom) }
                     }
                 }
-                is HorizontalScrollView ->{
+                is HorizontalScrollView -> {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         view.leftEdgeEffectColor = colors.left
                         view.rightEdgeEffectColor = colors.right
@@ -115,24 +84,31 @@ object ThemeEdgeEffect {
                         FIELD_HORIZONTAL_RIGHT?.get(view)?.apply { setFieldColor(this, colors.right) }
                     }
                 }
-                is ViewPager ->{
+                is ViewPager -> {
                     FIELD_PAGER_LEFT?.get(view)?.apply { setFieldColor(this, colors.left) }
                     FIELD_PAGER_RIGHT?.get(view)?.apply { setFieldColor(this, colors.right) }
                 }
-                is NestedScrollView ->{
+                is NestedScrollView -> {
                     FIELD_NESTED_TOP?.get(view)?.apply { setFieldColor(this, colors.top) }
                     FIELD_NESTED_BOTTOM?.get(view)?.apply { setFieldColor(this, colors.bottom) }
                 }
                 is RecyclerView -> {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        view.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
-                            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
-                                return EdgeEffect(view.context).apply {
-                                    when(direction){
-                                        DIRECTION_LEFT ->  this.color = colors.left
-                                        DIRECTION_TOP ->  this.color = colors.top
-                                        DIRECTION_BOTTOM ->  this.color = colors.bottom
-                                        DIRECTION_RIGHT ->  this.color = colors.right
+                    view.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+                        override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                            return EdgeEffect(view.context).apply {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    when (direction) {
+                                        DIRECTION_LEFT -> this.color = colors.left
+                                        DIRECTION_TOP -> this.color = colors.top
+                                        DIRECTION_BOTTOM -> this.color = colors.bottom
+                                        DIRECTION_RIGHT -> this.color = colors.right
+                                    }
+                                } else {
+                                    when (direction) {
+                                        DIRECTION_LEFT -> setFieldColor(this, colors.left)
+                                        DIRECTION_TOP -> setFieldColor(this, colors.top)
+                                        DIRECTION_BOTTOM -> setFieldColor(this, colors.bottom)
+                                        DIRECTION_RIGHT -> setFieldColor(this, colors.right)
                                     }
                                 }
                             }
@@ -148,7 +124,7 @@ object ThemeEdgeEffect {
 
 
     private fun getPrivateFieldOrNull(clazz: Class<*>?, fieldName: String): Field? {
-        if(clazz == null) return null
+        if (clazz == null) return null
         var field: Field? = null
         try {
             clazz.getDeclaredField(fieldName)
@@ -162,12 +138,16 @@ object ThemeEdgeEffect {
         return field
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    //    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setFieldColor(forObject: Any?, @ColorInt color: Int) {
         var edgeEffect = forObject
         if (edgeEffect is EdgeEffectCompat) { // EdgeEffectCompat
             EDGE_EFFECT_COMPAT_FIELD_EDGE_EFFECT?.apply {
-                edgeEffect = try { this[edgeEffect] } catch (e: Exception) { return }
+                edgeEffect = try {
+                    this[edgeEffect]
+                } catch (e: Exception) {
+                    return
+                }
             }
         }
         if (edgeEffect == null) return

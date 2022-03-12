@@ -44,17 +44,17 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ColorPickerDialo
         mainViewModel.onColorSelected(null)
     }
 
-
-    fun changeFlagSetting(setting: CheckSetting){
+    fun changeFlagSetting(setting: CheckSetting) {
         mainViewModel.setChangingSetting(setting)
         mainViewModel.onCheckChanged(!setting.anyValue)
     }
+
     fun clearFlagSetting(setting: CheckSetting) {
         mainViewModel.setChangingSetting(setting)
         mainViewModel.onCheckChanged(null)
     }
 
-    fun showSimpleAlertDialog(){
+    fun showSimpleAlertDialog() {
         val icon = ThemeUtils.getDrawableResCompat(this, android.R.attr.alertDialogIcon)
         val alertDialog = AlertDialog.Builder(this)
             .setTitle("Alert")
@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ColorPickerDialo
         Theming.themeAlertDialog(alertDialog)
     }
 
-    fun showSimpleDialogFragment(){
+    fun showSimpleDialogFragment() {
         AlertDialogFragmentBuilder()
             .withErrorIcon()
             .withMessage("DialogFragment")

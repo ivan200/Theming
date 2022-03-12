@@ -3,161 +3,161 @@ package com.ivan200.theminglib
 enum class ThemeColor {
     //base colors
     /** Основной цвет подсветки **/
-    colorPrimary,
+    ColorPrimary,
     /** Цвет фона **/
-    colorBackground,
+    ColorBackground,
 
     //additional colors
     /** Цвет хорошего результата **/
-    colorFine,
+    ColorFine,
     /** Цвет плохого результата **/
-    colorError,
+    ColorError,
 
     //System components
     /** Цвет фона окна, на случай если статусбар прозрачный **/
-    colorWindowBackground,
+    ColorWindowBackground,
     /** Цвет статусбара **/
-    colorStatusBar,
-    /** Цвет статусбара на апи 21-22, где текст на статусбаре всегда белый **/
-    colorStatusBarDark,
+    ColorStatusBar,
+    /** Цвет статусбара на апи 21-22 (Android 5), где текст на статусбаре всегда белый **/
+    ColorStatusBarDark,
 
-    /** Цвет нижнего навбара **/
-    colorNavBar,
-    /** Цвет нижнего навбара на апи 21-25, где кнопки всегда белые **/
-    colorNavBarDark,
-    /** Цвет разделителя нижнего навбара, включается на апи 28+ **/
-    colorNavBarDivider,
+    /** Цвет панели навигации **/
+    ColorNavBar,
+    /** Цвет панели навигации на апи 21-25 (Android 5-7), где кнопки всегда белые **/
+    ColorNavBarDark,
+    /** Цвет разделителя панели навигаци, включается на апи 28+ (Android 9+) **/
+    ColorNavBarDivider,
 
     /** Цвет подсветки RecyclerView и ListView при скролле.
      * От него наследуются цвета разных сторон подсветки,
-     * и также используется на апи<21 для всех строн RecyclerView **/
-    colorEdgeGlow,
+     * и также используется на апи<21 (Android <5) для всех строн RecyclerView **/
+    ColorEdgeGlow,
 
     /** Цвет подсветки верхней границы ScrollView, ListView и RecyclerView **/
-    colorEdgeGlowTop,
+    ColorEdgeGlowTop,
     /** Цвет подсветки нижней границы ScrollView, ListView и RecyclerView **/
-    colorEdgeGlowBottom,
+    ColorEdgeGlowBottom,
     /** Цвет подсветки левой границы HorizontalScrollView, ViewPager и RecyclerView **/
-    colorEdgeGlowLeft,
+    ColorEdgeGlowLeft,
     /** Цвет подсветки правой границы HorizontalScrollView, ViewPager и RecyclerView **/
-    colorEdgeGlowRight,
+    ColorEdgeGlowRight,
 
     //Text
     /** Цвет текста **/
-    colorText,
+    ColorText,
     /** Цвет хинта текста **/
-    colorTextHint,
+    ColorTextHint,
 
     /** Цвет разделителя в ячейках **/
-    colorDivider,
+    ColorDivider,
 
     //Input
     /** Цвет иконки глаза скрывающей пароль **/
-    colorInputPasswordEye,
+    ColorInputPasswordEye,
     /** Цвет подсвечиваемого помощника **/
-    colorInputHelper,
+    ColorInputHelper,
     /** Цвет подсвечиваемой ошибки **/
-    colorInputError,
+    ColorInputError,
     /** Цвет верхней надписи при активации данного поля ввода **/
-    colorInputHintFocused,
+    ColorInputHintFocused,
     /** Цвет хинта вводимого текста **/
-    colorInputHint,
+    ColorInputHint,
     /** Цвет вводимого текста **/
-    colorInputText,
+    ColorInputText,
     /** Цвет полоски под полем ввода **/
-    colorInputBottomLine,
+    ColorInputBottomLine,
     /** Цвет моргающего курсора **/
-    colorInputCursor,
+    ColorInputCursor,
     /** Цвет выделения текста **/
-    colorInputHighlight,
+    ColorInputHighlight,
     /** Цвет захватов при выделении  текста **/
-    colorInputHandles,
+    ColorInputHandles,
 
     //ProgressBar
     /** Цвет прогрессбара **/
-    colorProgressBar,
+    ColorProgressBar,
     /** Цвет второго прогрессбара (автоматически затеняется) **/
-    colorProgressBarSecondary,
+    ColorProgressBarSecondary,
     /** Цвет фона прогрессбара **/
-    colorProgressBarBackground,
+    ColorProgressBarBackground,
     //SeekBar
     /** Цвет ручки сикбара **/
-    colorSeekBarThumb,
+    ColorSeekBarThumb,
     /** Цвет точек на сикбаре с делениями **/
-    colorSeekBarTickMark,
+    ColorSeekBarTickMark,
 
     //Button
     /** Цвет фона кнопки **/
-    colorButtonBackground,
+    ColorButtonBackground,
     /** Цвет текста кнопки **/
-    colorButtonText,
+    ColorButtonText,
 
     //Checkbox
     /** Цвет чекбокса **/
-    colorCheckBoxActive,
+    ColorCheckBoxActive,
     /** Цвет неактивированного чекбокса **/
-    colorCheckBoxInactive,
+    ColorCheckBoxInactive,
 
     //RadioButton
     /** Цвет радиокнопки **/
-    colorRadioActive,
+    ColorRadioActive,
     /** Цвет неактивированной радиокнопки **/
-    colorRadioInactive,
+    ColorRadioInactive,
 
     //Switch
     /** Цвет переключателя **/
-    colorSwitchActive,
+    ColorSwitchActive,
     /** Цвет неактивированного переключателя **/
-    colorSwitchInactive,
+    ColorSwitchInactive,
 
     //FloatingActionButton
     /** Цвет фона fab кнопки **/
-    colorFabBackground,
+    ColorFabBackground,
     /** Цвет иконки на fab кнопке **/
-    colorFabIcon,
+    ColorFabIcon,
 
     //AlertDialog
     /** Цвет фона диалога **/
-    colorAlertBackground,
+    ColorAlertBackground,
     /** Цвет заголовка диалога **/
-    colorAlertTitle,
+    ColorAlertTitle,
     /** Цвет иконки диалога **/
-    colorAlertIcon,
+    ColorAlertIcon,
     /** Цвет текста диалога **/
-    colorAlertMessage,
+    ColorAlertMessage,
     /** Цвет кнопок  диалога **/
-    colorAlertButtons,
+    ColorAlertButtons,
     /** Цвет позитивной кнопки далога **/
-    colorAlertButtonPositive,
+    ColorAlertButtonPositive,
     /** Цвет негативной кнопки далога **/
-    colorAlertButtonNegative,
+    ColorAlertButtonNegative,
     /** Цвет нейтральной кнопки далога **/
-    colorAlertButtonNeutral,
+    ColorAlertButtonNeutral,
 
     //ImageView
     /** Цвет иконок **/
-    colorIcon,
+    ColorIcon,
 
     //ActionBar
     /** Цвет верхнего экшенбара **/
-    colorActionBar,
+    ColorActionBar,
     /** Цвет текста верхнего экшенбара **/
-    colorActionBarText,
+    ColorActionBarText,
     /** Цвет второго текста верхнего экшенбара **/
-    colorActionBarTextSecondary,
+    ColorActionBarTextSecondary,
     /** Цвет иконок верхнего экшенбара **/
-    colorActionBarIcons,
+    ColorActionBarIcons,
 
     //BottomNavigationView
     /** Цвет фона нижней панели **/
-    colorBottomNavBackground,
+    ColorBottomNavBackground,
     /** Цвет иконок нижней панели **/
-    colorBottomNavIcon,
+    ColorBottomNavIcon,
     /** Цвет иконки выбранной вкладки нижней панели **/
-    colorBottomNavIconSelected,
+    ColorBottomNavIconSelected,
     /** Цвет текста нижней панели **/
-    colorBottomNavText,
+    ColorBottomNavText,
     /** Цвет текста выбранной вкладки нижней панели **/
-    colorBottomNavTextSelected,
+    ColorBottomNavTextSelected,
 
 }

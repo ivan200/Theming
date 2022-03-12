@@ -1,14 +1,16 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+}
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdk 32
+
     defaultConfig {
         applicationId "com.ivan200.theming"
-        minSdkVersion 14
-        targetSdkVersion 29
+        minSdk 14
+        targetSdk 32
         versionCode 1
         versionName "1.0"
         vectorDrawables.useSupportLibrary = true
@@ -18,20 +20,20 @@ android {
             minifyEnabled false
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "androidx.appcompat:appcompat:1.1.0"
-    implementation "androidx.core:core-ktx:1.2.0"
+    implementation "androidx.appcompat:appcompat:1.4.1"
+    implementation "androidx.core:core-ktx:1.7.0"
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
 
-    implementation "androidx.fragment:fragment:1.2.2"
-
-    def nav_version = "2.2.1"
+    def nav_version = "2.4.1"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-
 
     implementation 'com.jaredrummler:colorpicker:1.1.0'
 

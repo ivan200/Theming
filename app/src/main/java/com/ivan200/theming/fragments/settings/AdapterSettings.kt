@@ -11,11 +11,16 @@ import com.ivan200.theming.MainActivity
 
 class AdapterSettings(
     val activity: MainActivity,
-    val list: List<Setting>) :
+    val list: List<Setting>
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     interface PrefBinder {
         fun bind(setting: Setting)
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
     override fun getItemViewType(position: Int): Int {

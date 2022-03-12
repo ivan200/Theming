@@ -10,7 +10,7 @@ import com.ivan200.theming.fragments.BaseFragment
 // Created by Ivan200 on 14.02.2020.
 //
 
-class LoginFragment : BaseFragment(R.layout.fragment_login){
+class LoginFragment : BaseFragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setbackButton()

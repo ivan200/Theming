@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include layout="@layout/view_main_app_bar" />
@@ -26,8 +26,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/login_input_username"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical|center_horizontal">
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/login_edit_login"
@@ -44,10 +43,10 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/login_input_password"
-                app:passwordToggleEnabled="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_default">
+                android:layout_marginTop="@dimen/margin_default"
+                app:passwordToggleEnabled="true">
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/login_edit_password"
@@ -65,9 +64,7 @@
 
             <SearchView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-
+                android:layout_height="wrap_content" />
 
 
             <androidx.appcompat.widget.AppCompatButton
