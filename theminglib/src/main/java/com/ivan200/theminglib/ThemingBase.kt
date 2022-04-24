@@ -32,6 +32,7 @@ import com.ivan200.theminglib.ThemeColor.*
 import com.ivan200.theminglib.ThemeFlag.*
 import com.ivan200.theminglib.ThemeUtils.createStateDrawable
 import com.ivan200.theminglib.ThemeUtils.dpToPx
+import com.ivan200.theminglib.ThemeUtils.getFieldByName
 import com.ivan200.theminglib.ThemeUtils.isColorBright
 import com.ivan200.theminglib.ThemeUtils.setBackgroundColorSavePadding
 import com.ivan200.theminglib.ThemeUtils.setBackgroundResourceSavePadding
@@ -39,6 +40,8 @@ import com.ivan200.theminglib.ThemeUtils.setBackgroundSavePadding
 import com.ivan200.theminglib.ThemeUtils.setDecorFlag
 import com.ivan200.theminglib.ThemeUtils.setWindowFlag
 import com.ivan200.theminglib.ThemeUtils.spToPx
+import com.ivan200.theminglib.ThemeUtils.tinted
+import java.lang.reflect.Field
 import java.util.*
 import kotlin.math.sqrt
 
@@ -342,16 +345,14 @@ abstract class ThemingBase {
                     seek.tickMarkTintList = ColorStateList.valueOf(tickColor)
                 }
                 seek is AppCompatSeekBar -> {
-                    ThemeUtils.modifyPrivateFieldThroughEditor<Drawable>(
-                        seek, AppCompatSeekBar::class.java,
-                        "mAppCompatSeekBarHelper", "mTickMark"
-                    ) {
-                        it?.apply { ThemeUtils.tintDrawable(this, tickColor) }
+                    val editor = AppCompatSeekBar::class.java.getFieldByName("mAppCompatSeekBarHelper")?.get(seek) ?: return
+                    editor.javaClass.getFieldByName("mTickMark")?.let { field: Field ->
+                        (field.get(editor) as? Drawable)?.let { field.set(editor, it.tinted(tickColor)) }
                     }
                 }
                 else -> {
-                    ThemeUtils.modifyPrivateField<Drawable>(seek, AbsSeekBar::class.java, "mTickMark") {
-                        it?.apply { ThemeUtils.tintDrawable(this, tickColor) }
+                    AbsSeekBar::class.java.getFieldByName("mTickMark")?.let { field: Field ->
+                        (field.get(seek) as? Drawable)?.let { field.set(seek, it.tinted(tickColor)) }
                     }
                 }
             }
@@ -363,11 +364,11 @@ abstract class ThemingBase {
                 seek.thumbTintList = ColorStateList.valueOf(thumbColor)
             }
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN -> {
-                seek.thumb = ThemeUtils.tintDrawable(seek.thumb, thumbColor)
+                seek.thumb = seek.thumb.tinted(thumbColor)
             }
             else -> {
-                ThemeUtils.modifyPrivateField<Drawable>(seek, AbsSeekBar::class.java, "mThumb") {
-                    it?.apply { ThemeUtils.tintDrawable(this, thumbColor) }
+                AbsSeekBar::class.java.getFieldByName("mThumb")?.let { field: Field ->
+                    (field.get(seek) as? Drawable)?.let { field.set(seek, it.tinted(thumbColor)) }
                 }
             }
         }
@@ -423,8 +424,9 @@ abstract class ThemingBase {
 
     fun themeEditText(editText: AppCompatEditText) {
         ViewCompat.setBackgroundTintList(editText, ColorStateList.valueOf(ColorInputBottomLine.intColor))    //нижняя полоска
-        setCursorDrawableColor(editText, ColorInputCursor.intColor)          //моргающий курсор
-        setHandlesColor(editText, ColorInputHandles.intColor)                //Захваты выделения
+
+        editText.setCursorDrawableColor(ColorInputCursor.intColor)          //моргающий курсор
+        editText.setHandlesColor(ColorInputHandles.intColor)                //Захваты выделения
 
         editText.setTextColor(colorInputTextStateList)
         editText.setHintTextColor(ColorInputHint.intColor)
@@ -628,8 +630,8 @@ abstract class ThemingBase {
 //            )
 //        )
 
-        val cornerRadius = dpToPx(2, button.context)
-        val dp4 = dpToPx(4, button.context).toInt()
+        val cornerRadius = 2.dpToPx(button.context)
+        val dp4 = 4.dpToPx(button.context).toInt()
         val buttonPadding = Rect(dp4, dp4, dp4, dp4)
 
         val bg = getAdaptiveRippleDrawable(
@@ -698,60 +700,55 @@ abstract class ThemingBase {
 //        textInputLayout.boxStrokeColor = accentColor
     }
 
-    fun setCursorDrawableColor(editText: TextView, @ColorInt color: Int) {
+    fun TextView.setCursorDrawableColor(@ColorInt color: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val gradientDrawable = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(color, color))
-            gradientDrawable.setSize(spToPx(2, editText.context).toInt(), editText.textSize.toInt())
-            editText.textCursorDrawable = gradientDrawable
+            textCursorDrawable = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(color, color))
+                .apply { setSize(2.spToPx(context).toInt(), textSize.toInt()) }
             return
         }
 
         try {
-            val editorField = try {
-                TextView::class.java.getDeclaredField("mEditor").apply { isAccessible = true }
-            } catch (t: Throwable) {
+            val editorField = TextView::class.java.getFieldByName("mEditor")
+            val editor = editorField?.get(this) ?: this
+            val editorClass: Class<*> = if (editorField != null) editor.javaClass else TextView::class.java
+            val cursorRes = TextView::class.java.getFieldByName("mCursorDrawableRes")?.get(this) as? Int ?: return
+
+            val tintedCursorDrawable = ContextCompat.getDrawable(context, cursorRes)?.tinted(color) ?: return
+
+            val cursorField = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                editorClass.getFieldByName("mDrawableForCursor")
+            } else {
                 null
             }
-            val editor = editorField?.get(editText) ?: editText
-            val editorClass: Class<*> = if (editorField == null) TextView::class.java else editor.javaClass
-
-            val tintedCursorDrawable =
-                ThemeUtils.getPrivateFieldOrNull<Int>(editText, TextView::class.java, "mCursorDrawableRes")
-                    ?.let { ContextCompat.getDrawable(editText.context, it) ?: return }
-                    ?.let { ThemeUtils.tintDrawable(it, color) } ?: return
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ThemeUtils.modifyPrivateField<Drawable?>(editor, editorClass, "mDrawableForCursor") {
-                    tintedCursorDrawable
-                }
+            if (cursorField != null) {
+                cursorField.set(editor, tintedCursorDrawable)
             } else {
-                ThemeUtils.modifyPrivateField<Array<Drawable?>?>(editor, editorClass, "mDrawableForCursor") {
-                    arrayOf(tintedCursorDrawable, tintedCursorDrawable)
-                }
+                editorClass.getFieldByName("mCursorDrawable", "mDrawableForCursor")
+                    ?.set(editor, arrayOf(tintedCursorDrawable, tintedCursorDrawable))
             }
         } catch (t: Throwable) {
             t.printStackTrace()
         }
     }
 
-    @SuppressLint("DiscouragedPrivateApi")
-    fun setHandlesColor(textView: TextView, @ColorInt color: Int) {
+    @SuppressLint("PrivateApi")
+    fun TextView.setHandlesColor(@ColorInt color: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val size = spToPx(22, textView.context).toInt()
+            val size = 22.spToPx(context).toInt()
             val corner = size.toFloat() / 2
-            val inset = spToPx(10, textView.context).toInt()
+            val inset = 10.spToPx(context).toInt()
 
             //left drawable
             val drLeft = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(color, color))
             drLeft.setSize(size, size)
             drLeft.cornerRadii = floatArrayOf(corner, corner, 0f, 0f, corner, corner, corner, corner)
-            textView.setTextSelectHandleLeft(InsetDrawable(drLeft, inset, 0, inset, inset))
+            setTextSelectHandleLeft(InsetDrawable(drLeft, inset, 0, inset, inset))
 
             //right drawable
             val drRight = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(color, color))
             drRight.setSize(size, size)
             drRight.cornerRadii = floatArrayOf(0f, 0f, corner, corner, corner, corner, corner, corner)
-            textView.setTextSelectHandleRight(InsetDrawable(drRight, inset, 0, inset, inset))
+            setTextSelectHandleRight(InsetDrawable(drRight, inset, 0, inset, inset))
 
             //middle drawable
             val drMiddle = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(color, color))
@@ -763,38 +760,27 @@ abstract class ThemingBase {
             rotateDrawable.drawable = insetDrawable
             rotateDrawable.toDegrees = 45f
             rotateDrawable.level = 10000
-            textView.setTextSelectHandle(rotateDrawable)
+            setTextSelectHandle(rotateDrawable)
             return
         }
 
         try {
-            val editorField = try {
-                TextView::class.java.getDeclaredField("mEditor")
-                    .apply { if (!isAccessible) isAccessible = true }
-            } catch (t: Throwable) {
-                null
+            val editorField = TextView::class.java.getFieldByName("mEditor")
+            val editor = editorField?.get(this) ?: this
+            val editorClass: Class<*> = if (editorField != null) Class.forName("android.widget.Editor") else TextView::class.java
+            val handles = androidx.collection.ArrayMap<String, String>(3).apply {
+                put("mSelectHandleLeft", "mTextSelectHandleLeftRes")
+                put("mSelectHandleRight", "mTextSelectHandleRightRes")
+                put("mSelectHandleCenter", "mTextSelectHandleRes")
             }
-            val editor = if (editorField == null) textView else editorField[textView]
-            val editorClass: Class<*> =
-                if (editorField == null) TextView::class.java else editor.javaClass
+            for (i in 0 until handles.size) {
+                editorClass.getFieldByName(handles.keyAt(i))?.let { field: Field ->
+                    val drawable = field.get(editor) as? Drawable
+                        ?: TextView::class.java.getFieldByName(handles.valueAt(i))
+                            ?.getInt(this)
+                            ?.let { ContextCompat.getDrawable(context, it) }
 
-            val handleNames = arrayOf(
-                "mSelectHandleLeft",
-                "mSelectHandleRight",
-                "mSelectHandleCenter"
-            )
-            val resNames = arrayOf(
-                "mTextSelectHandleLeftRes",
-                "mTextSelectHandleRightRes",
-                "mTextSelectHandleRes"
-            )
-            for (i in handleNames.indices) {
-                ThemeUtils.modifyPrivateField<Drawable?>(editor, editorClass, handleNames[i]) {
-                    val img = it
-                        ?: ThemeUtils.getPrivateFieldOrNull<Int>(textView, TextView::class.java, resNames[i])
-                            ?.run { ContextCompat.getDrawable(textView.context, this) }
-
-                    img?.run { ThemeUtils.tintDrawable(this, color) }
+                    if (drawable != null) field.set(editor, drawable.tinted(color))
                 }
             }
         } catch (e: java.lang.Exception) {
@@ -957,9 +943,7 @@ abstract class ThemingBase {
         val icon: View? = if (view != null) view.findViewById(android.R.id.icon)
         else alertDialog.findViewById(android.R.id.icon)
 
-        (icon as? ImageView)?.drawable?.apply {
-            ThemeUtils.tintDrawable(this, ColorAlertIcon.intColor)
-        }
+        (icon as? ImageView)?.drawable?.tinted(ColorAlertIcon.intColor)
 
         val title = findAlertTitle(icon?.parent as? ViewGroup)
         title?.setTextColor(ColorStateList.valueOf(ColorAlertTitle.intColor))
@@ -978,7 +962,7 @@ abstract class ThemingBase {
         themeViewBack(toolbar, ColorActionBar.intColor)
         themeAllMenuIcons(toolbar.menu, ColorActionBarIcons.intColor)
 
-        toolbar.navigationIcon = ThemeUtils.tintDrawable(toolbar.navigationIcon, ColorActionBarIcons.intColor)
+        toolbar.navigationIcon = toolbar.navigationIcon?.tinted(ColorActionBarIcons.intColor)
         toolbar.setTitleTextColor(ColorActionBarText.intColor)
         toolbar.setSubtitleTextColor(ColorActionBarTextSecondary.intColor)
     }
@@ -997,16 +981,13 @@ abstract class ThemingBase {
     @SuppressLint("ResourceType")
     fun themeMenuItem(item: MenuItem, color: Int?) {
         val iconColor = color ?: ColorActionBarIcons.intColor
-        item.icon?.let {
-            val tintedDrawable = ThemeUtils.tintDrawable(it, iconColor)
-            item.icon = tintedDrawable
-        }
+        item.icon = item.icon.tinted(iconColor)
         item.actionView
             ?.findViewById<View?>(1000411)//R.id.expand_activities_button)
             ?.findViewById<ImageView?>(1000095)//R.id.image)
             ?.let {
                 if (it.drawable != null) {
-                    it.setImageDrawable(ThemeUtils.tintDrawable(it.drawable, iconColor))
+                    it.setImageDrawable(it.drawable.tinted(iconColor))
                 }
             }
     }

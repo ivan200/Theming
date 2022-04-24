@@ -22,20 +22,22 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.ViewCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import com.ivan200.theminglib.ThemeUtils.spToPx
+import java.lang.reflect.Field
 
 //
 // Created by Ivan200 on 25.02.2020.
 //
 
 object ThemeUtils {
-    fun spToPx(number:Number, context: Context? = null): Float {
+    fun Number.spToPx(context: Context? = null): Float {
         val res = context?.resources ?: android.content.res.Resources.getSystem()
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, number.toFloat(), res.displayMetrics)
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, this.toFloat(), res.displayMetrics)
     }
 
-    fun dpToPx(number:Number, context: Context? = null): Float {
+    fun Number.dpToPx(context: Context? = null): Float {
         val res = context?.resources ?: android.content.res.Resources.getSystem()
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, number.toFloat(), res.displayMetrics)
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), res.displayMetrics)
     }
 
     fun setWindowFlag(win: Window, bits: Int, state: Boolean) {
@@ -59,21 +61,18 @@ object ThemeUtils {
         }
     }
 
-    fun tintDrawable(drawable: Drawable?, @ColorInt color: Int): Drawable? {
-        if(drawable == null) return null
-        (drawable as? VectorDrawableCompat)
-            ?.apply { setTintList(ColorStateList.valueOf(color)) }
-            ?.let { return it }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            (drawable as? VectorDrawable)
-                ?.apply { setTintList(ColorStateList.valueOf(color)) }
-                ?.let { return it }
+    fun Drawable.tinted(@ColorInt color: Int): Drawable = when {
+        this is VectorDrawableCompat -> {
+            this.apply { setTintList(ColorStateList.valueOf(color)) }
         }
-
-        val wrappedDrawable = DrawableCompat.wrap(drawable)
-        DrawableCompat.setTint(wrappedDrawable, color)
-        return DrawableCompat.unwrap(wrappedDrawable)
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && this is VectorDrawable -> {
+            this.apply { setTintList(ColorStateList.valueOf(color)) }
+        }
+        else -> {
+            DrawableCompat.wrap(this)
+                .also { DrawableCompat.setTint(it, color) }
+                .let { DrawableCompat.unwrap(it) }
+        }
     }
 
     fun tintDrawableWithMatrix(drawable: Drawable, @ColorInt color: Int) {
@@ -274,21 +273,31 @@ object ThemeUtils {
         }
     }
 
-    fun <T> getPrivateFieldOrNull(obj: Any, clazz: Class<*>, fieldName: String): T? {
-        var result: T? = null
-        try {
-            clazz.getDeclaredField(fieldName)
-                .apply { isAccessible = true }
-                .run {
-                    result = try {
-                        get(obj) as T?
-                    } catch (ex: NullPointerException) {
-                        null
-                    }
-                }
-        } catch (t: Throwable) {
-            t.printStackTrace()
+//
+//    fun <T> getPrivateFieldOrNull(obj: Any, clazz: Class<*>, fieldName: String): T? {
+//        var result: T? = null
+//        try {
+//            clazz.getDeclaredField(fieldName)
+//                .apply { isAccessible = true }
+//                .run {
+//                    result = try {
+//                        get(obj) as T?
+//                    } catch (ex: NullPointerException) {
+//                        null
+//                    }
+//                }
+//        } catch (t: Throwable) {
+//            t.printStackTrace()
+//        }
+//        return result
+//    }
+
+    fun Class<*>.getFieldByName(vararg name: String): Field? {
+        name.forEach {
+            try{
+                return this.getDeclaredField(it).apply { isAccessible = true }
+            } catch (t: Throwable) { }
         }
-        return result
+        return null
     }
 }

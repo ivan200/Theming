@@ -12,6 +12,7 @@ import androidx.core.widget.EdgeEffectCompat
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
+import com.ivan200.theminglib.ThemeUtils.tinted
 import java.lang.reflect.Field
 
 
@@ -154,11 +155,11 @@ object ThemeEdgeEffect {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) { // EdgeGlow or old EdgeEffect
             try {
                 (EDGE_GLOW_FIELD_EDGE?.get(edgeEffect) as? Drawable)?.apply {
-                    ThemeUtils.tintDrawable(this, color)
+                    this.tinted(color)
                     callback = null // free up any references
                 }
                 (EDGE_GLOW_FIELD_GLOW?.get(edgeEffect) as? Drawable)?.apply {
-                    ThemeUtils.tintDrawable(this, color)
+                    this.tinted(color)
                     callback = null // free up any references
                 }
             } catch (ex: Exception) {

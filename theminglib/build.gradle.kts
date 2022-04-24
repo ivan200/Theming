@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = rootProject.extra.get("compileSdkVersion") as Int
 
     defaultConfig {
-        minSdk = 14
-        targetSdk = 32
+        minSdk = rootProject.extra.get("minSdkVersion") as Int
+        targetSdk = rootProject.extra.get("targetSdkVersion") as Int
     }
 }
 
