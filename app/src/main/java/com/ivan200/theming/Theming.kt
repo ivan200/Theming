@@ -5,10 +5,9 @@ import com.ivan200.theminglib.ThemeColor
 import com.ivan200.theminglib.ThemeFlag
 import com.ivan200.theminglib.ThemingBase
 
-object Theming : ThemingBase(){
+object Theming : ThemingBase() {
 //    override val colorPrimary: Int get() = Prefs.colorPrimary ?: super.colorPrimary
 //    override val colorBackground: Int get() = Prefs.colorBackground ?: super.colorBackground
-
 
     override fun getColor(color: ThemeColor): Int {
         val newColor = Prefs.getIntPref(color.name)
@@ -25,5 +24,4 @@ object Theming : ThemingBase(){
         val newFlag = Prefs.getBoolPref(flag.name)
         return newFlag ?: super.getFlag(flag)
     }
-
 }

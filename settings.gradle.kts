@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-include ':app', ':theminglib'
-rootProject.name='Theming'
+include (":app", ":theminglib")
+rootProject.name="Theming"

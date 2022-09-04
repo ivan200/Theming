@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ivan200.theming.R
 import com.ivan200.theming.Theming
 import com.ivan200.theming.fragments.BaseFragment
-
+import com.ivan200.theming.fragments.main.MainAdapter.MainCellInfo
 
 //
 // Created by Ivan200 on 14.02.2020.
@@ -40,18 +40,14 @@ class MainFragment : BaseFragment(R.layout.fragment_main), Toolbar.OnMenuItemCli
         recyclerView.adapter = adapter
     }
 
-    fun getMainCellList() : List<MainCellInfo>{
+    fun getMainCellList(): List<MainCellInfo> {
         return listOf(
             MainCellInfo("Settings", navigatePrefs),
             MainCellInfo("ProgressBars", navigateProgress),
             MainCellInfo("Buttons", navigateButtons),
             MainCellInfo("Inputs", navigateLogin),
-            MainCellInfo("AlertDialog", View.OnClickListener {
-                mActivity.showSimpleAlertDialog()
-            }),
-            MainCellInfo("DialogFragment", View.OnClickListener {
-                mActivity.showSimpleDialogFragment()
-            })
+            MainCellInfo("AlertDialog") { mActivity.showSimpleAlertDialog() },
+            MainCellInfo("DialogFragment") { mActivity.showSimpleDialogFragment() }
         )
     }
 
@@ -70,5 +66,4 @@ class MainFragment : BaseFragment(R.layout.fragment_main), Toolbar.OnMenuItemCli
         }
         return true
     }
-
 }

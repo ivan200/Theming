@@ -10,22 +10,22 @@ import com.ivan200.theming.Theming
 // Created by Ivan200 on 25.02.2020.
 //
 
-class ViewHolderSettingHeader (view: View) : RecyclerView.ViewHolder(view), AdapterSettings.PrefBinder {
+class ViewHolderSettingHeader(view: View) : RecyclerView.ViewHolder(view), AdapterSettings.PrefBinder {
     companion object {
         val layoutId: Int = R.layout.cell_setting_header
     }
 
-    val title : TextView get() = itemView.findViewById(R.id.tv_title)
-    val divider : View get() = itemView.findViewById(R.id.v_divider)
+    val title: TextView get() = itemView.findViewById(R.id.tv_title)
+    val divider: View get() = itemView.findViewById(R.id.v_divider)
 
-    fun colorize(){
+    fun colorize() {
         Theming.themeViewBack(itemView)
         Theming.themeTextViewSecondary(title)
         Theming.themeDivider(divider)
     }
 
     override fun bind(setting: Setting) {
-        if(setting !is HeaderSetting) return
+        if (setting !is HeaderSetting) return
         colorize()
         title.text = setting.title
     }

@@ -19,7 +19,6 @@ import com.ivan200.theming.Theming
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
-
 //
 // Created by Ivan200 on 28.02.2020.
 //
@@ -74,7 +73,6 @@ data class AlertDialogFragmentBuilder(
     companion object {
         val parcelTag = AlertDialogFragmentBuilder::class.java.simpleName
     }
-
 
     fun show(activity: FragmentActivity, requestCode: Int) {
         show(activity, requestCode, activity.supportFragmentManager.fragments[0], activity.supportFragmentManager)
@@ -134,7 +132,8 @@ data class AlertDialogFragmentBuilder(
                     } else {
                         builder.setSingleChoiceItems(items!!.toTypedArray(), checkedItem) { dialog, which ->
                             targetFragment!!.onActivityResult(
-                                targetRequestCode, DialogInterface.BUTTON_POSITIVE,
+                                targetRequestCode,
+                                DialogInterface.BUTTON_POSITIVE,
                                 Intent().putExtra(EXTRA_SINGLE_CHOISE, which)
                             )
                         }
@@ -143,14 +142,16 @@ data class AlertDialogFragmentBuilder(
                     builder.setMessage(currMessage)
                 }
 
-                val positiveButtonText = if (items == null && positiveButton.isNullOrEmpty())
+                val positiveButtonText = if (items == null && positiveButton.isNullOrEmpty()) {
                     requireContext().getString(android.R.string.ok)
-                else
+                } else {
                     positiveButton
+                }
                 if (!positiveButtonText.isNullOrEmpty()) {
                     builder.setPositiveButton(positiveButtonText) { dialog, id ->
                         targetFragment!!.onActivityResult(
-                            targetRequestCode, DialogInterface.BUTTON_POSITIVE,
+                            targetRequestCode,
+                            DialogInterface.BUTTON_POSITIVE,
                             if (checkedItems == null) {
                                 null
                             } else {
@@ -204,4 +205,3 @@ data class AlertDialogFragmentBuilder(
         }
     }
 }
-

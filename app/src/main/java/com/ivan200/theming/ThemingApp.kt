@@ -15,6 +15,4 @@ class ThemingApp : Application() {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
         Prefs.init(this)
     }
-
-
 }

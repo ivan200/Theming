@@ -2,7 +2,7 @@ package com.ivan200.theminglib
 
 enum class ThemeFlag {
 
-    //System components
+    // System components
     /** Отрисовывать ли системную плашку под статусбаром если его цвет прозрачный **/
     StatusDrawSystemBar,
     /** Скзать системе что статусбар светлый, чтобы значки стали чёрного цвета, поддерживается на на апи 23+ (Android 6+) **/
@@ -12,5 +12,4 @@ enum class ThemeFlag {
     NavBarDrawSystemBar,
     /** Скзать системе что панель навигации светлая, чтобы значки стали чёрного цвета, поддерживается на на апи 26+ (Android 8+) **/
     NavBarLightTheme
-
 }

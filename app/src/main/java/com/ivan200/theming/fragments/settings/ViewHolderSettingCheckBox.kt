@@ -10,21 +10,20 @@ import com.ivan200.theming.R
 import com.ivan200.theming.Theming
 import com.ivan200.theming.showIf
 
-
 //
 // Created by Ivan200 on 25.02.2020.
 //
 
-class ViewHolderSettingCheckBox (
+class ViewHolderSettingCheckBox(
     view: View,
     val activity: MainActivity
-) : RecyclerView.ViewHolder(view), AdapterSettings.PrefBinder,  View.OnClickListener {
+) : RecyclerView.ViewHolder(view), AdapterSettings.PrefBinder, View.OnClickListener {
     companion object {
         val layoutId: Int = R.layout.cell_setting_checkbox
     }
 
-    val title : TextView get() = itemView.findViewById(R.id.tv_title)
-    val subTitle : TextView get() = itemView.findViewById(R.id.tv_subtitle)
+    val title: TextView get() = itemView.findViewById(R.id.tv_title)
+    val subTitle: TextView get() = itemView.findViewById(R.id.tv_subtitle)
 
     val btnClear: ImageButton get() = itemView.findViewById(R.id.btn_clear)
     val cbSetting: CheckBox get() = itemView.findViewById(R.id.cb_setting)
@@ -36,7 +35,7 @@ class ViewHolderSettingCheckBox (
         btnClear.setOnClickListener(this::onBtnClearClick)
     }
 
-    fun colorize(){
+    fun colorize() {
         Theming.themeCellBg(itemView)
         Theming.themeIcon(btnClear)
         Theming.themeTextViewSecondary(subTitle)
@@ -57,7 +56,7 @@ class ViewHolderSettingCheckBox (
         cbSetting.isEnabled = _setting.useDefault
     }
 
-    fun onBtnClearClick(v: View){
+    fun onBtnClearClick(v: View) {
         activity.clearFlagSetting(_setting)
     }
 

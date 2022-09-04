@@ -15,7 +15,6 @@ import androidx.viewpager.widget.ViewPager
 import com.ivan200.theminglib.ThemeUtils.tinted
 import java.lang.reflect.Field
 
-
 //
 // Created by Ivan200 on 02.03.2020.
 //
@@ -36,14 +35,7 @@ object ThemeEdgeEffect {
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> null
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH -> EdgeEffect::class.java
-            else -> {
-                try {
-                    Class.forName("android.widget.EdgeGlow")
-                } catch (e: ClassNotFoundException) {
-                    if (BuildConfig.DEBUG) e.printStackTrace()
-                    null
-                }
-            }
+            else -> runCatching { Class.forName("android.widget.EdgeGlow") }.getOrNull()
         }
     }
 
@@ -118,26 +110,17 @@ object ThemeEdgeEffect {
                 }
             }
         } catch (ex: Exception) {
-            if (BuildConfig.DEBUG)
+            if (BuildConfig.DEBUG) {
                 ex.printStackTrace()
+            }
         }
     }
 
-
-    private fun getPrivateFieldOrNull(clazz: Class<*>?, fieldName: String): Field? {
-        if (clazz == null) return null
-        var field: Field? = null
-        try {
-            clazz.getDeclaredField(fieldName)
-                .apply { isAccessible = true }
-                .run {
-                    field = this
-                }
-        } catch (e: Throwable) {
-            if (BuildConfig.DEBUG) e.printStackTrace()
-        }
-        return field
-    }
+    private fun getPrivateFieldOrNull(clazz: Class<*>?, fieldName: String): Field? = runCatching {
+        clazz?.getDeclaredField(fieldName)?.apply { isAccessible = true }
+    }.onFailure {
+        if (BuildConfig.DEBUG) it.printStackTrace()
+    }.getOrNull()
 
     //    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setFieldColor(forObject: Any?, @ColorInt color: Int) {
@@ -163,20 +146,20 @@ object ThemeEdgeEffect {
                     callback = null // free up any references
                 }
             } catch (ex: Exception) {
-                if (BuildConfig.DEBUG)
+                if (BuildConfig.DEBUG) {
                     ex.printStackTrace()
+                }
             }
         } else { // EdgeEffect
             (edgeEffect as? EdgeEffect)?.color = color
         }
     }
 
-    //Перекрашивание цвета оверскролла на всех RecyclerView на api<21. Достаточно вызвать 1 раз в onCreate приложения
+    // Перекрашивание цвета оверскролла на всех RecyclerView на api<21. Достаточно вызвать 1 раз в onCreate приложения
     fun themeOverScrollGlowColor(res: android.content.res.Resources, @ColorInt color: Int) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             ThemeUtils.changeResColor(res, "overscroll_glow", color)
             ThemeUtils.changeResColor(res, "overscroll_edge", color)
         }
     }
-
 }

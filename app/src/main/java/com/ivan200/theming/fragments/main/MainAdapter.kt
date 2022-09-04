@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ivan200.theming.R
 import com.ivan200.theming.Theming
 
-class MainCellInfo(val title: String, val onClick: View.OnClickListener)
-
 class MainAdapter(private val list: List<MainCellInfo>) :
     RecyclerView.Adapter<MainAdapter.MainViewHolder>() {
+
+    class MainCellInfo(val title: String, val onClick: View.OnClickListener)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder =
         MainViewHolder(
@@ -29,9 +29,7 @@ class MainAdapter(private val list: List<MainCellInfo>) :
         init {
             Theming.themeCellBg(itemView)
             Theming.themeView(title)
-            itemView.setOnClickListener {
-                _mainCellInfo.onClick.onClick(it)
-            }
+            itemView.setOnClickListener(_mainCellInfo.onClick)
         }
 
         fun bind(mainCellInfo: MainCellInfo) {

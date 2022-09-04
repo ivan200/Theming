@@ -6,11 +6,36 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Rect
-import android.graphics.drawable.*
+import android.graphics.drawable.AnimationDrawable
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.InsetDrawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.RippleDrawable
+import android.graphics.drawable.RotateDrawable
+import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RoundRectShape
 import android.os.Build
-import android.view.*
-import android.widget.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import android.widget.AbsListView
+import android.widget.AbsSeekBar
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.CompoundButton
+import android.widget.HorizontalScrollView
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.RadioButton
+import android.widget.ScrollView
+import android.widget.SeekBar
+import android.widget.Switch
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatEditText
@@ -29,7 +54,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import com.ivan200.theminglib.ThemeColor.*
-import com.ivan200.theminglib.ThemeFlag.*
+import com.ivan200.theminglib.ThemeFlag.NavBarDrawSystemBar
+import com.ivan200.theminglib.ThemeFlag.NavBarLightTheme
+import com.ivan200.theminglib.ThemeFlag.StatusDrawSystemBar
+import com.ivan200.theminglib.ThemeFlag.StatusLightTheme
 import com.ivan200.theminglib.ThemeUtils.createStateDrawable
 import com.ivan200.theminglib.ThemeUtils.dpToPx
 import com.ivan200.theminglib.ThemeUtils.getFieldByName
@@ -42,9 +70,9 @@ import com.ivan200.theminglib.ThemeUtils.setWindowFlag
 import com.ivan200.theminglib.ThemeUtils.spToPx
 import com.ivan200.theminglib.ThemeUtils.tinted
 import java.lang.reflect.Field
-import java.util.*
+import java.util.Arrays
+import java.util.EnumMap
 import kotlin.math.sqrt
-
 
 //
 // Created by Ivan200 on 28.11.2019.
@@ -143,7 +171,7 @@ abstract class ThemingBase {
         return mFlags[flag]!!.invoke()
     }
 
-    //Вызывать внутри onCreate
+    // Вызывать внутри onCreate
     fun themeActivity(activity: Activity) {
         themeWindowBackground(activity.window)
         themeStatusBar(activity.window)
@@ -197,7 +225,7 @@ abstract class ThemingBase {
         }
     }
 
-    //применяет цвета для списка вьюшек
+    // применяет цвета для списка вьюшек
     fun themeViews(vararg view: View?) {
         view.forEach {
             if (it != null) {
@@ -209,7 +237,7 @@ abstract class ThemingBase {
         }
     }
 
-    //применяет цвета для вьюшки и всех её сабвьюшек
+    // применяет цвета для вьюшки и всех её сабвьюшек
     fun themeViewAndSubviews(view: View) {
         themeView(view)
         if (view is ViewGroup) {
@@ -393,7 +421,7 @@ abstract class ThemingBase {
             }
             return
         }
-        //circular progress have no progressDrawable
+        // circular progress have no progressDrawable
         if (progress.progressDrawable == null) {
             (progress.indeterminateDrawable as? LayerDrawable)?.apply {
                 if (numberOfLayers == 1) {
@@ -423,10 +451,10 @@ abstract class ThemingBase {
     }
 
     fun themeEditText(editText: AppCompatEditText) {
-        ViewCompat.setBackgroundTintList(editText, ColorStateList.valueOf(ColorInputBottomLine.intColor))    //нижняя полоска
+        ViewCompat.setBackgroundTintList(editText, ColorStateList.valueOf(ColorInputBottomLine.intColor)) // нижняя полоска
 
-        editText.setCursorDrawableColor(ColorInputCursor.intColor)          //моргающий курсор
-        editText.setHandlesColor(ColorInputHandles.intColor)                //Захваты выделения
+        editText.setCursorDrawableColor(ColorInputCursor.intColor) // моргающий курсор
+        editText.setHandlesColor(ColorInputHandles.intColor) // Захваты выделения
 
         editText.setTextColor(colorInputTextStateList)
         editText.setHintTextColor(ColorInputHint.intColor)
@@ -450,7 +478,8 @@ abstract class ThemingBase {
             arrayOf(
                 intArrayOf(android.R.attr.state_pressed),
                 intArrayOf(-android.R.attr.state_pressed)
-            ), intArrayOf(
+            ),
+            intArrayOf(
                 pressedRippleColors.first,
                 ColorFabBackground.intColor
             )
@@ -462,22 +491,21 @@ abstract class ThemingBase {
         }
     }
 
-
     @ColorInt
     fun getPressedColor(@ColorInt buttonColor: Int, colorBrightness: Double? = null): Int {
         val brightness = colorBrightness ?: ThemeUtils.getColorBrightness(buttonColor)
-        //задаём цвет нажатия от основного цвета (чуть темнее или светлее)
+        // задаём цвет нажатия от основного цвета (чуть темнее или светлее)
         return ThemeUtils.setColorBrightness(buttonColor, if (brightness > 50) brightness - 20 else brightness + 20)
     }
 
     fun getPressedRippleColors(@ColorInt buttonColor: Int): Pair<Int, Int> {
-        //Задаём цвет выделения - немного темнее или светлее чем основной цвет кнопки
+        // Задаём цвет выделения - немного темнее или светлее чем основной цвет кнопки
         val colorBrightness = ThemeUtils.getColorBrightness(buttonColor)
         val isMiddleBrightness = colorBrightness > 40 && colorBrightness < 60
         val pressedColor = getPressedColor(buttonColor, colorBrightness)
         val ripple: Int =
-            if (isMiddleBrightness) pressedColor      //Если кнопка среднеяркого цвета, то риппл красим как цвет нажатия
-            else ThemeUtils.invertColorBrightness(buttonColor)      //если кнопка белая - риппл чёрный, и наоборот
+            if (isMiddleBrightness) pressedColor // Если кнопка среднеяркого цвета, то риппл красим как цвет нажатия
+            else ThemeUtils.invertColorBrightness(buttonColor) // если кнопка белая - риппл чёрный, и наоборот
         return Pair(pressedColor, ripple)
     }
 
@@ -501,7 +529,8 @@ abstract class ThemingBase {
                 intArrayOf(android.R.attr.state_pressed),
                 intArrayOf(android.R.attr.state_selected),
                 intArrayOf(-android.R.attr.state_selected)
-            ), intArrayOf(
+            ),
+            intArrayOf(
                 getPressedColor(ColorBottomNavIconSelected.intColor),
                 ColorBottomNavIconSelected.intColor,
                 ColorBottomNavIcon.intColor
@@ -513,7 +542,8 @@ abstract class ThemingBase {
                 intArrayOf(android.R.attr.state_pressed),
                 intArrayOf(android.R.attr.state_selected),
                 intArrayOf(-android.R.attr.state_selected)
-            ), intArrayOf(
+            ),
+            intArrayOf(
                 getPressedColor(ColorBottomNavTextSelected.intColor),
                 ColorBottomNavTextSelected.intColor,
                 ColorBottomNavText.intColor
@@ -552,7 +582,6 @@ abstract class ThemingBase {
         )
         setBackgroundSavePadding(view, bg)
 
-
 //        val bgSelectable =
 //            ThemeUtils.getDrawableResCompat(view.context, android.R.attr.selectableItemBackground)
 //        val layers = LayerDrawable(arrayOf(ColorDrawable(color), bgSelectable))
@@ -567,15 +596,15 @@ abstract class ThemingBase {
     fun themeButtonText(button: Button, textColor: Int, isPlain: Boolean) {
         val isColorBright = isColorBright(textColor)
 
-        //нажатый цвет текста - миксим с чёрным или белым (чуть темнее или светлее)
-        //Если кнопка с цветным фоном, то не меняем нажатый цвет
+        // нажатый цвет текста - миксим с чёрным или белым (чуть темнее или светлее)
+        // Если кнопка с цветным фоном, то не меняем нажатый цвет
         val colorPressed = if (isPlain) ColorUtils.blendARGB(
             textColor,
             if (isColorBright) Color.BLACK else Color.WHITE,
             alphaCompound.toFloat()
         ) else textColor
 
-        //цвет текста выключенной кнопки - сильно полупрозрачный
+        // цвет текста выключенной кнопки - сильно полупрозрачный
         val colorDisabled = ColorUtils.setAlphaComponent(textColor, (255 * getDisabledAlpha(!isColorBright)).toInt())
 
         val list = ColorStateList(
@@ -583,7 +612,8 @@ abstract class ThemingBase {
                 intArrayOf(-android.R.attr.state_enabled),
                 intArrayOf(android.R.attr.state_pressed),
                 intArrayOf(-android.R.attr.state_pressed)
-            ), intArrayOf(
+            ),
+            intArrayOf(
                 colorDisabled,
                 colorPressed,
                 textColor
@@ -612,7 +642,7 @@ abstract class ThemingBase {
         setBackgroundResourceSavePadding(button, bgSelectable)
     }
 
-    //Красим кнопку в определённый цвет
+    // Красим кнопку в определённый цвет
     fun themeButton(button: Button, bgColor: Int? = null, textColor: Int? = null) {
         val tColor = textColor ?: if (bgColor != null) getTextColor(bgColor) else ColorButtonText.intColor
         themeButtonText(button, tColor, false)
@@ -651,7 +681,6 @@ abstract class ThemingBase {
         cornerRadius: Float = 0f,
         padding: Rect? = null
     ): Drawable {
-
         val isButtonThemeLight = isColorBright(normalColor)
         val disabledAlpha = getDisabledAlpha(isButtonThemeLight)
         val disabledColor = ColorUtils.setAlphaComponent(normalColor, (255 * disabledAlpha).toInt())
@@ -683,10 +712,10 @@ abstract class ThemingBase {
     }
 
     fun themeTextInputLayout(textInputLayout: TextInputLayout) {
-        textInputLayout.setHelperTextColor(ColorStateList.valueOf(ColorInputHelper.intColor))     //Хелпер
-        textInputLayout.setErrorTextColor(ColorStateList.valueOf(ColorInputError.intColor))       //Подсветка ошибок
-        textInputLayout.setPasswordVisibilityToggleTintList(ColorStateList.valueOf(ColorInputPasswordEye.intColor))   //Глаз сбоку от пароля
-        textInputLayout.setEndIconTintList(ColorStateList.valueOf(ColorInputPasswordEye.intColor))   //Глаз сбоку от пароля
+        textInputLayout.setHelperTextColor(ColorStateList.valueOf(ColorInputHelper.intColor)) // Хелпер
+        textInputLayout.setErrorTextColor(ColorStateList.valueOf(ColorInputError.intColor)) // Подсветка ошибок
+        textInputLayout.setPasswordVisibilityToggleTintList(ColorStateList.valueOf(ColorInputPasswordEye.intColor)) // Глаз сбоку от пароля
+        textInputLayout.setEndIconTintList(ColorStateList.valueOf(ColorInputPasswordEye.intColor)) // Глаз сбоку от пароля
 
         val states = arrayOf(
             intArrayOf(android.R.attr.state_focused),
@@ -696,7 +725,7 @@ abstract class ThemingBase {
         textInputLayout.defaultHintTextColor = ColorStateList(
             states,
             intArrayOf(ColorInputHintFocused.intColor, ColorInputHint.intColor)
-        )    //Верхняя надпись, Хинт
+        ) // Верхняя надпись, Хинт
 //        textInputLayout.boxStrokeColor = accentColor
     }
 
@@ -738,19 +767,19 @@ abstract class ThemingBase {
             val corner = size.toFloat() / 2
             val inset = 10.spToPx(context).toInt()
 
-            //left drawable
+            // left drawable
             val drLeft = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(color, color))
             drLeft.setSize(size, size)
             drLeft.cornerRadii = floatArrayOf(corner, corner, 0f, 0f, corner, corner, corner, corner)
             setTextSelectHandleLeft(InsetDrawable(drLeft, inset, 0, inset, inset))
 
-            //right drawable
+            // right drawable
             val drRight = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(color, color))
             drRight.setSize(size, size)
             drRight.cornerRadii = floatArrayOf(0f, 0f, corner, corner, corner, corner, corner, corner)
             setTextSelectHandleRight(InsetDrawable(drRight, inset, 0, inset, inset))
 
-            //middle drawable
+            // middle drawable
             val drMiddle = GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, intArrayOf(color, color))
             drMiddle.setSize(size, size)
             drMiddle.cornerRadii = floatArrayOf(0f, 0f, corner, corner, corner, corner, corner, corner)
@@ -767,19 +796,22 @@ abstract class ThemingBase {
         try {
             val editorField = TextView::class.java.getFieldByName("mEditor")
             val editor = editorField?.get(this) ?: this
-            val editorClass: Class<*> = if (editorField != null) Class.forName("android.widget.Editor") else TextView::class.java
-            val handles = androidx.collection.ArrayMap<String, String>(3).apply {
-                put("mSelectHandleLeft", "mTextSelectHandleLeftRes")
-                put("mSelectHandleRight", "mTextSelectHandleRightRes")
-                put("mSelectHandleCenter", "mTextSelectHandleRes")
-            }
-            for (i in 0 until handles.size) {
-                editorClass.getFieldByName(handles.keyAt(i))?.let { field: Field ->
-                    val drawable = field.get(editor) as? Drawable
-                        ?: TextView::class.java.getFieldByName(handles.valueAt(i))
-                            ?.getInt(this)
-                            ?.let { ContextCompat.getDrawable(context, it) }
 
+            val editorClass: Class<*> = if (editorField != null) {
+                runCatching { Class.forName("android.widget.Editor") }.getOrNull() ?: editorField.javaClass
+            } else {
+                TextView::class.java
+            }
+            val handles = listOf(
+                "mSelectHandleLeft" to "mTextSelectHandleLeftRes",
+                "mSelectHandleRight" to "mTextSelectHandleRightRes",
+                "mSelectHandleCenter" to "mTextSelectHandleRes"
+            )
+            for (i in 0 until handles.size) {
+                editorClass.getFieldByName(handles[i].first)?.let { field: Field ->
+                    val drawable = field.get(editor) as? Drawable
+                        ?: TextView::class.java.getFieldByName(handles[i].second)?.getInt(this)
+                            ?.let { ContextCompat.getDrawable(context, it) }
                     if (drawable != null) field.set(editor, drawable.tinted(color))
                 }
             }
@@ -823,13 +855,13 @@ abstract class ThemingBase {
         return alphaText
     }
 
-    //получение альфы в зависимости от текущей темы
+    // получение альфы в зависимости от текущей темы
     private fun getDisabledAlpha(isThemeLight: Boolean): Double {
         return if (isThemeLight) 0.26       //disabled_alpha_material_light
         else 0.3                            //disabled_alpha_material_dark
     }
 
-    //получение хинта в зависимости от цвета текста
+    // получение хинта в зависимости от цвета текста
     fun getHintColor(@ColorInt textColor: Int): Int {
         val isTextColorDark = !isColorBright(textColor)
         val alphaHint = getHintAlpha(isTextColorDark)
@@ -844,7 +876,7 @@ abstract class ThemingBase {
         }
     }
 
-    //получение цвета разделителя в зависимости от цвета текста
+    // получение цвета разделителя в зависимости от цвета текста
     fun getDividerColor(@ColorInt textColor: Int): Int {
         val alphaDivider = getDividerAlpha(!isColorBright(textColor))
         return ColorUtils.setAlphaComponent(textColor, (255 * alphaDivider).toInt())
@@ -888,7 +920,8 @@ abstract class ThemingBase {
                 intArrayOf(-android.R.attr.state_checked, -android.R.attr.state_enabled),
                 intArrayOf(android.R.attr.state_checked),
                 intArrayOf(-android.R.attr.state_checked)
-            ), intArrayOf(
+            ),
+            intArrayOf(
                 ColorUtils.setAlphaComponent(colorActive, (255 * disabledAlpha).toInt()),
                 ColorUtils.setAlphaComponent(colorInactive, (255 * disabledAlpha).toInt()),
                 colorActive,
@@ -925,9 +958,8 @@ abstract class ThemingBase {
         switch.setTextColor(colorTextStateList)
     }
 
-
-    //call this after dialog.show() to apply theme to alertDialog
-    //or inside/after onStart() of DialogFragment
+    // call this after dialog.show() to apply theme to alertDialog
+    // or inside/after onStart() of DialogFragment
     fun themeAlertDialog(alertDialog: AlertDialog, view: View? = null) {
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(ColorAlertBackground.intColor))
 
@@ -983,13 +1015,12 @@ abstract class ThemingBase {
         val iconColor = color ?: ColorActionBarIcons.intColor
         item.icon = item.icon.tinted(iconColor)
         item.actionView
-            ?.findViewById<View?>(1000411)//R.id.expand_activities_button)
-            ?.findViewById<ImageView?>(1000095)//R.id.image)
+            ?.findViewById<View?>(1000411) // R.id.expand_activities_button)
+            ?.findViewById<ImageView?>(1000095) // R.id.image)
             ?.let {
                 if (it.drawable != null) {
                     it.setImageDrawable(it.drawable.tinted(iconColor))
                 }
             }
     }
-
 }

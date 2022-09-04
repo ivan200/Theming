@@ -15,7 +15,7 @@ import com.ivan200.theminglib.ThemeUtils
 // Created by Ivan200 on 25.02.2020.
 //
 
-class ViewHolderSettingColor (
+class ViewHolderSettingColor(
     view: View,
     val mainActivity: MainActivity
 ) : RecyclerView.ViewHolder(view), AdapterSettings.PrefBinder, View.OnClickListener {
@@ -23,10 +23,10 @@ class ViewHolderSettingColor (
         val layoutId: Int = R.layout.cell_setting_color
     }
 
-    val title : TextView get() = itemView.findViewById(R.id.tv_title)
-    val subTitle : TextView get() = itemView.findViewById(R.id.tv_subtitle)
-    val colorView : View get() = itemView.findViewById(R.id.v_color)
-    val colorViewBorder : FrameLayout get() = itemView.findViewById(R.id.v_color_border)
+    val title: TextView get() = itemView.findViewById(R.id.tv_title)
+    val subTitle: TextView get() = itemView.findViewById(R.id.tv_subtitle)
+    val colorView: View get() = itemView.findViewById(R.id.v_color)
+    val colorViewBorder: FrameLayout get() = itemView.findViewById(R.id.v_color_border)
     val btnClear: ImageButton get() = itemView.findViewById(R.id.btn_clear)
 
     private lateinit var _setting: ColorSetting
@@ -36,7 +36,7 @@ class ViewHolderSettingColor (
         btnClear.setOnClickListener(this::onBtnClearClick)
     }
 
-    fun colorize(){
+    fun colorize() {
         Theming.themeCellBg(itemView)
         Theming.themeViews(title)
         Theming.themeTextViewSecondary(subTitle)
@@ -55,7 +55,7 @@ class ViewHolderSettingColor (
         colorViewBorder.setBackgroundColor(ThemeUtils.invertColorBrightness(setting.anyValue))
     }
 
-    fun onBtnClearClick(v: View){
+    fun onBtnClearClick(v: View) {
         mainActivity.clearColorSetting(_setting)
     }
 

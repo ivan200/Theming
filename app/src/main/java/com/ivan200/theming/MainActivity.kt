@@ -78,4 +78,3 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), ColorPickerDialo
             .show(this, 5)
     }
 }
-

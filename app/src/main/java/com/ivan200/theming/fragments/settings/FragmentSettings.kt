@@ -69,6 +69,7 @@ class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
     fun getPrefsList(): List<Setting> {
         val c = requireContext()
         return listOf(
+            // @formatter:off
             HeaderSetting(mActivity, "Основные цвета"),
 
             ColorSetting(mActivity, ThemeColor.ColorPrimary, "Основной цвет подсветки"),
@@ -166,6 +167,7 @@ class FragmentSettings : BaseFragment(R.layout.fragment_prefs) {
 
             HeaderSetting(mActivity, "Иконки"),
             ColorSetting(mActivity, ThemeColor.ColorIcon, "Цвет иконок")
+            // @formatter:on
         )
     }
 }

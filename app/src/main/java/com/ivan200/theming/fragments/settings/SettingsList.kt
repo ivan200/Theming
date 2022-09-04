@@ -15,11 +15,12 @@ abstract class Setting(val context: Context) {
     open val subTitle: String get() = ""
 }
 
-class ColorSetting(context: Context,
-                   val themeColor: ThemeColor,
-                   override val subTitle: String = "",
-                   val allowTransparent: Boolean = false
-                   ) : Setting(context){
+class ColorSetting(
+    context: Context,
+    val themeColor: ThemeColor,
+    override val subTitle: String = "",
+    val allowTransparent: Boolean = false
+) : Setting(context) {
     override val title: String get() = themeColor.name.capitalize()
     var value: Int?
         get() = Prefs.getIntPref(themeColor.name)
@@ -29,9 +30,11 @@ class ColorSetting(context: Context,
     val useDefault get() = value == null
 }
 
-class CheckSetting(context: Context,
-                   val themeFlag: ThemeFlag,
-                   override val subTitle: String ) : Setting(context){
+class CheckSetting(
+    context: Context,
+    val themeFlag: ThemeFlag,
+    override val subTitle: String
+) : Setting(context) {
     override val title: String get() = themeFlag.name.capitalize()
     var value: Boolean?
         get() = Prefs.getBoolPref(themeFlag.name)

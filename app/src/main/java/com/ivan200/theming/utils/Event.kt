@@ -17,7 +17,7 @@ open class Event<out T>(private val content: T) {
      * Returns the content and prevents its use again.
      */
     fun get(): T? {
-        return if(handled.compareAndSet(false, true)) content else null
+        return if (handled.compareAndSet(false, true)) content else null
     }
 
     /**

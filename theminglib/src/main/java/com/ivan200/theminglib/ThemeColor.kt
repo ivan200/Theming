@@ -1,7 +1,8 @@
 package com.ivan200.theminglib
 
 enum class ThemeColor {
-    //base colors
+
+    // base colors
     /** Основной цвет подсветки **/
     ColorPrimary,
     /** Цвет фона **/
@@ -158,6 +159,5 @@ enum class ThemeColor {
     /** Цвет текста нижней панели **/
     ColorBottomNavText,
     /** Цвет текста выбранной вкладки нижней панели **/
-    ColorBottomNavTextSelected,
-
+    ColorBottomNavTextSelected
 }
